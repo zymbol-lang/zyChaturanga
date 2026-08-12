@@ -1,0 +1,31 @@
+चतुरङ्गम् — i18n completeness
+  ok    [sa] संस्कृतम्   ६०/६०
+  ok    [hi] हिन्दी   ६०/६०
+  ok    [fa] فارسی   ۶۰/۶۰
+  ok    [en] English   60/60
+  ok    [es] Español   60/60
+अङ्गनाम — piece names
+  ok    [sa] six pieces named
+  ok    [hi] six pieces named
+  ok    [fa] six pieces named
+  ok    [en] six pieces named
+  ok    [es] six pieces named
+जयवाक्यम् — composed result sentences
+  ok    [sa] four distinct sentences
+  ok    [hi] four distinct sentences
+  ok    [fa] four distinct sentences
+  ok    [en] four distinct sentences
+  ok    [es] four distinct sentences
+ग्रहणवाक्यम् — composed capture sentences
+  ok    [sa] elephant and chariot differ
+  ok    [hi] elephant and chariot differ
+  ok    [fa] elephant and chariot differ
+  ok    [en] elephant and chariot differ
+  ok    [es] elephant and chariot differ
+अङ्कलिपिः — numeral scripts
+  ok    Devanagari digits
+  ok    Persian digits
+  ok    Latin digits
+  ok    Hindi shares Devanagari
+  ok    Spanish shares Latin
+PASS — every key resolves in every locale

@@ -1,0 +1,27 @@
+[package]
+name = "chaturanga"
+version = "0.1.0"
+engine = ">=0.0.9"
+description = "Chaturanga, the ancestor of chess — written in Sanskrit, with the historical rules and an alpha-beta opponent"
+license = "AGPL-3.0-only"
+
+[[script]]
+name = "चतुरङ्गम्"
+path = "चतुरङ्गम्.zy"
+default = true
+desc = "संस्कृतम् — Sanskrit interface, Devanagari numerals"
+
+[[script]]
+name = "चतुरंग"
+path = "चतुरंग.zy"
+desc = "हिन्दी — Hindi interface, Devanagari numerals"
+
+[[script]]
+name = "شطرنج"
+path = "شطرنج.zy"
+desc = "فارسی — Persian interface, Eastern Arabic numerals"
+
+[[script]]
+name = "chaturanga"
+path = "chaturanga.zy"
+desc = "English interface, Latin numerals"

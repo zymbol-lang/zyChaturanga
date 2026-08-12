@@ -1,0 +1,289 @@
+// ============================================================
+// मूल/मतिः.zy — यन्त्रस्य मतिः
+//
+// अल्फा-बीटा गवेषणा, नकारात्मकरूपेण (negamax)। एका एव गवेषणा
+// उभयोः वर्णयोः, यतः "मम श्रेष्ठम्" इति "तस्य निकृष्टम्" इत्येव।
+//
+// GO इति क्रीडायाम् एतत् न शक्यम् आसीत्: तत्र प्रतिस्थितौ
+// त्रिशतम् अधिकाः चालाः, गवेषणा च व्यर्था। अत्र प्रतिस्थितौ
+// विंशतिः प्रायः, अतः गवेषणा एव योग्या रीतिः। एषः एव द्वयोः
+// क्रीडयोः मूलभेदः — तत्र स्थानस्य ज्ञानम्, अत्र गणना।
+//
+// स्तराः गभीरतया एव भिद्यन्ते, न मिथ्याक्रीडया:
+//
+//   निम्नः  १  एकपदी दृष्टिः — यत् अद्य गृह्यते तत् एव पश्यति
+//   मध्यमः २  प्रतिचालं पश्यति — मुधा अङ्गं न ददाति
+//   उच्चः   ३  प्रतिप्रतिचालं पश्यति — सरलं छलं रचयति
+//
+// मापितम् अस्मिन् एव यन्त्रे: वृक्षचारी प्रतिक्षणं अष्टशतं पदानि
+// गच्छति, यन्त्रकोशः (--vm) च एकत्रिंशत्सहस्राणि — अष्टात्रिंशद्गुणम्।
+// अतः उच्चः स्तरः वृक्षचारिणा द्वे त्रीणि वा क्षणानि याचते,
+// यन्त्रकोशेन तु क्षणस्य दशांशम्। क्रीडा उभाभ्यां चलति; उच्चस्तरः
+// यन्त्रकोशेन एव सुखदः।
+//
+// EN: मूल/मतिः.zy — the machine's mind
+//
+// Alpha-beta search in negamax form: one search serving both
+// colours, since "best for me" is exactly "worst for you".
+//
+// This was not available to a go engine: there a position offers
+// three hundred moves and search is hopeless. Here it offers about
+// twenty, so search is the right instrument. That is the deepest
+// difference between the two games — go rewards knowing shapes,
+// chaturanga rewards counting.
+//
+// The levels differ only in depth. A beginner is not a program
+// playing badly on purpose; it is one that cannot see far:
+//
+//   निम्नः  1  one ply — sees what can be taken right now
+//   मध्यमः 2  sees the reply — stops giving pieces away
+//   उच्चः   3  sees the counter-reply — sets simple traps
+//
+// Measured on the machine that wrote it: the tree-walker visits
+// ~800 nodes a second and the register VM ~31,000 — a factor of 38,
+// far above the ~4× the interpreter documents. So उच्चः costs a
+// couple of seconds under the tree-walker and a tenth of one under
+// `--vm`. The game plays on both; the top level is pleasant only
+// on the second.
+// ============================================================
+
+# .मूल_मतिः {
+
+    <# ./अष्टापदम् => अ
+    <# ./नियमाः => नि
+    <# ./आकलनम् => आ
+    <# ../मानकम्/यादृच्छिकम् => य
+
+    #> {
+        निम्नः
+        मध्यमः
+        उच्चः
+        गभीरता
+        विक्षेपः
+        चालचयनम्
+        गवेषणम्
+        क्रमणम्
+    }
+
+    निम्नः  := १
+    मध्यमः := २
+    उच्चः   := ३
+
+    // मातस्य मूल्यम्। पर्याप्तं महत् यथा कोऽपि सामग्र्याः योगः
+    // तत् न प्राप्नुयात् — सर्वाणि अङ्गानि मिलित्वा २९००।
+    // EN: The mate score, comfortably above any material sum — the
+    // whole army together is 2900.
+    _मातमूल्यम् := १००००
+
+    गभीरता(स्तरः) {
+        <~ ?? स्तरः {
+            १ => १
+            २ => २
+            _ => ३
+        }
+    }
+
+    // विक्षेपः: कियत् न्यूनं मूल्यं सहनीयम्। निम्नः स्तरः श्रेष्ठात्
+    // द्विशतेन न्यूनं चालम् अपि गृह्णाति — तावत् एव अङ्गस्य मूल्यम्,
+    // अतः स कदाचित् गजं मुधा दद्यात्। उच्चः विंशतेः अधिकं न सहते।
+    //
+    // EN: How far below the best a move may score and still be
+    // chosen. The beginner tolerates 200 — the price of a piece —
+    // so it will sometimes hand one over. The top level tolerates
+    // 20, which is less than a foot soldier and more than nothing,
+    // so it is not quite deterministic.
+    विक्षेपः(स्तरः) {
+        <~ ?? स्तरः {
+            १ => २००
+            २ => ६०
+            _ => २०
+        }
+    }
+
+    // चालानां क्रमः। ग्रहणानि प्रथमम्, महार्घं गृह्णत् अल्पार्घेन
+    // प्रथमम्। अल्फा-बीटा क्रमेण एव जीवति: श्रेष्ठः चालः प्रथमं
+    // दृष्टः चेत् शाखाच्छेदः शीघ्रं भवति। एतेन विना गभीरता ३
+    // चतुर्गुणं कालं याचते।
+    //
+    // EN: Move ordering. Captures first, and among them the ones
+    // that take the most with the least. Alpha-beta lives on
+    // ordering: seeing the best move first is what makes the cutoff
+    // happen early. Without this, depth 3 costs about four times
+    // more.
+    क्रमणम्(स्थितिः, चालाः) {
+        ग्राहकाः = []
+        शान्ताः = []
+        @ चालः : चालाः {
+            गृह्यम् = स्थितिः[अ::अन्तपदम्(चालः)]
+            ? गृह्यम् == ० {
+                शान्ताः = शान्ताः $+ चालः
+            } _ {
+                ग्राहकाः = ग्राहकाः $+ चालः
+            }
+        }
+
+        // ग्राहकाणां क्रमः: गृह्यस्य मूल्यं न्यून्य गन्तुः मूल्यम्।
+        // सरलं चयनक्रमणम् — संग्रहः लघुः, प्रायः दश।
+        // EN: Order the captures by victim value minus attacker
+        // value. A selection sort: the list is short, usually under
+        // ten, and a real sort would cost more to write than to run.
+        फलम् = []
+        शेषः = ग्राहकाः
+        @ (शेषः$#) > ० {
+            श्रेष्ठाङ्कः = १
+            श्रेष्ठमूल्यम् = _ग्रहणमूल्यम्(स्थितिः, शेषः[१])
+            संख्या = शेषः$#
+
+            // संख्या १ चेत् २..१ इति परिधिः अवरोहति — २, १ — न तु
+            // रिक्तः भवति। Zymbol इति भाषायां परिधिः स्वयं दिशं
+            // निश्चिनोति, अतः "शेषम् उपरि गच्छ" इति आशयः एकाङ्गे
+            // संग्रहे विपरीतं करोति। रक्षणम् आवश्यकम्।
+            //
+            // EN: With one element, the range 2..1 counts *down* —
+            // 2, 1 — instead of being empty. Zymbol ranges infer
+            // their own direction, so "walk the rest of the list"
+            // silently reverses on a one-element list and indexes
+            // past its end. The guard is not optional.
+            ? संख्या >= २ {
+                @ क:२..संख्या {
+                    मूल्यम् = _ग्रहणमूल्यम्(स्थितिः, शेषः[क])
+                    ? मूल्यम् > श्रेष्ठमूल्यम् {
+                        श्रेष्ठमूल्यम् = मूल्यम्
+                        श्रेष्ठाङ्कः = क
+                    }
+                }
+            }
+            फलम् = फलम् $+ शेषः[श्रेष्ठाङ्कः]
+            नवः = []
+            @ क:१..संख्या {
+                ? क <> श्रेष्ठाङ्कः { नवः = नवः $+ शेषः[क] }
+            }
+            शेषः = नवः
+        }
+
+        @ चालः : शान्ताः { फलम् = फलम् $+ चालः }
+        <~ फलम्
+    }
+
+    _ग्रहणमूल्यम्(स्थितिः, चालः) {
+        गृह्यम् = स्थितिः[अ::अन्तपदम्(चालः)]
+        गन्ता = स्थितिः[अ::आदिपदम्(चालः)]
+        <~ आ::अङ्गमूल्यम्(अ::अङ्गप्रकारः(गृह्यम्)) * १० - आ::अङ्गमूल्यम्(अ::अङ्गप्रकारः(गन्ता))
+    }
+
+    // नकारात्मका गवेषणा। वर्णस्य दृष्ट्या मूल्यम्।
+    //
+    // माते गभीरता योज्यते, यथा शीघ्रः मातः श्रेयान् — अन्यथा
+    // यन्त्रं मातं दृष्ट्वा अपि विलम्बेत, यतः सर्वे माताः समाः
+    // स्युः।
+    //
+    // गतिरोधः अपि पराजयः, यतः अत्र स नियमः। एतत् एव नियमपरिवर्तनं
+    // गवेषणायाम् एकस्मिन् एव स्थाने स्पृशति — तत् एव प्रमाणं यत्
+    // नियमाः स्वस्थाने लिखिताः।
+    //
+    // EN: Negamax with alpha-beta, scored from the mover's side.
+    //
+    // Depth is added to the mate score so that a faster mate is
+    // worth more — otherwise the engine, seeing mate, would dawdle,
+    // since every mate would look alike.
+    //
+    // Stalemate is a loss too, because that is this game's rule. The
+    // rule change touches the search in exactly one place, which is
+    // the evidence that the rules were written where they belong.
+    गवेषणम्(स्थितिः<~, वर्णः, गभीरता, अल्फा, बीटा, सारणी, पदानि<~) {
+        पदानि = पदानि + १
+
+        // गभीरतायाः परीक्षा प्रथमम्, न चालानाम् उत्पादनम्। पत्राणि
+        // एव वृक्षस्य बहुभागः; तत्र चालान् उत्पादयितुं यत् मूल्यम्
+        // एव पर्याप्तम्, स द्विगुणः व्ययः।
+        //
+        // मूल्यम् एतत्: पत्रे मातः न ज्ञायते। सर्वेषु गवेषणासु
+        // एतत् एव स्वीक्रियते — मातः एकपदं विलम्ब्य दृश्यते।
+        //
+        // EN: Depth first, before generating moves. Leaves are most
+        // of the tree, and generating moves at a node that only
+        // needs a number is double the work.
+        //
+        // The price: mate is not seen at a leaf. Every search
+        // engine accepts that — the mate is simply found one ply
+        // later.
+        ? गभीरता <= ० { <~ आ::मूल्याङ्कनम्(स्थितिः, वर्णः, सारणी) }
+
+        चालाः = नि::वैधचालाः(स्थितिः, वर्णः)
+
+        // मातः च गतिरोधः च उभौ पराजयौ — अस्याः क्रीडायाः नियमः।
+        // गभीरता योज्यते यथा शीघ्रः मातः श्रेयान्।
+        // EN: Mate and stalemate are both losses under this game's
+        // rule. Depth is added so a faster mate scores higher.
+        ? (चालाः$#) == ० { <~ ० - १०००० - गभीरता }
+
+        रिपुवर्णः = अ::रिपुः(वर्णः)
+        श्रेष्ठम् = ० - ९९९९९
+        @ चालः : क्रमणम्(स्थितिः, चालाः) {
+            अङ्गम् = स्थितिः[अ::आदिपदम्(चालः)]
+            गृहीतम् = ०
+            नि::कृति(स्थितिः, चालः, गृहीतम्)
+            मूल्यम् = ० - गवेषणम्(स्थितिः, रिपुवर्णः, गभीरता - १, ० - बीटा, ० - अल्फा, सारणी, पदानि)
+            नि::प्रत्यावर्तनम्(स्थितिः, चालः, अङ्गम्, गृहीतम्)
+
+            ? मूल्यम् > श्रेष्ठम् { श्रेष्ठम् = मूल्यम् }
+            ? मूल्यम् > अल्फा { अल्फा = मूल्यम् }
+            ? अल्फा >= बीटा { <~ श्रेष्ठम् }
+        }
+        <~ श्रेष्ठम्
+    }
+
+    // चालस्य चयनम्। सर्वेषां मूलचालानां मूल्यं गणयित्वा, श्रेष्ठात्
+    // विक्षेपान्तर्गताः सर्वे समुच्चित्य, तेषु एकः यादृच्छिकः।
+    //
+    // "श्रेष्ठं गृहीत्वा किञ्चित् यादृच्छिकं क्षिप्त्वा" इति न।
+    // तत् क्रीडां वैकल्पिकां न करोति, केवलं कदाचित् मूर्खाम्।
+    // अत्र तु स्तरः वदति "एतावता न्यूनं मया न ज्ञायते", ततः च
+    // अज्ञातेषु समेषु यादृच्छिकम् — एतत् एव आरम्भकस्य क्रीडा।
+    //
+    // EN: Choosing a move: score every root move, gather everything
+    // within the level's tolerance of the best, and pick one of
+    // those at random.
+    //
+    // Not "take the best and add noise". That does not make the
+    // play varied, only occasionally stupid. This says instead
+    // "below this margin I cannot tell the difference", and then
+    // chooses freely among the moves it cannot tell apart — which
+    // is what playing like a beginner actually is.
+    चालचयनम्(स्थितिः<~, वर्णः, स्तरः, पदानि<~) {
+        पदानि = ०
+        चालाः = नि::वैधचालाः(स्थितिः, वर्णः)
+        ? (चालाः$#) == ० { <~ ० }
+        ? (चालाः$#) == १ { <~ चालाः[१] }
+
+        सारणी = आ::सारणी()
+        गभी = गभीरता(स्तरः)
+        रिपुवर्णः = अ::रिपुः(वर्णः)
+
+        // एकवारम् एव क्रमणम्। मूल्यानि क्रमितानां क्रमेण एव
+        // सञ्चीयन्ते, अतः द्वौ संग्रहौ एकत्र पठ्येते।
+        // EN: Ordered once. The scores accumulate in the ordered
+        // list's own order, so the two arrays are read together.
+        क्रमिताः = क्रमणम्(स्थितिः, चालाः)
+        मूल्यानि = []
+        श्रेष्ठम् = ० - ९९९९९
+        @ चालः : क्रमिताः {
+            अङ्गम् = स्थितिः[अ::आदिपदम्(चालः)]
+            गृहीतम् = ०
+            नि::कृति(स्थितिः, चालः, गृहीतम्)
+            मूल्यम् = ० - गवेषणम्(स्थितिः, रिपुवर्णः, गभी - १, ० - ९९९९९, ९९९९९, सारणी, पदानि)
+            नि::प्रत्यावर्तनम्(स्थितिः, चालः, अङ्गम्, गृहीतम्)
+            मूल्यानि = मूल्यानि $+ मूल्यम्
+            ? मूल्यम् > श्रेष्ठम् { श्रेष्ठम् = मूल्यम् }
+        }
+
+        सीमा = श्रेष्ठम् - विक्षेपः(स्तरः)
+        योग्याः = []
+        संख्या = क्रमिताः$#
+        @ क:१..संख्या {
+            ? मूल्यानि[क] >= सीमा { योग्याः = योग्याः $+ क्रमिताः[क] }
+        }
+        ? (योग्याः$#) == ० { <~ क्रमिताः[१] }
+        <~ योग्याः[य::पूर्णाङ्कः(१, योग्याः$#)]
+    }
+}

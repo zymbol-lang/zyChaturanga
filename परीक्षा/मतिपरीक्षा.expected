@@ -1,0 +1,43 @@
+चतुरङ्गम् — the engine reads the position
+आकलनम् — material
+  ok    white starts with 2900
+  ok    black starts with 2900
+  ok    chariot beats counsellor
+  ok    horse beats elephant
+  ok    king is not material
+  ok    evaluation is symmetric
+  ok    the opening is level
+वैधता — the engine never proposes an illegal move
+  ok    level 1 opens legally
+  ok    level 2 opens legally
+  ok    level 3 opens legally
+  ok    level 1 midgame move is legal
+  ok    level 1 left the board untouched
+  ok    level 2 midgame move is legal
+  ok    level 2 left the board untouched
+  ok    level 3 midgame move is legal
+  ok    level 3 left the board untouched
+ग्रहणम् — it takes what is left hanging
+  ok    level 1 takes the free chariot
+  ok    level 2 takes the free chariot
+  ok    level 3 takes the free chariot
+मातः — it sees a mate in one
+  ok    black is not lost yet
+  ok    black has exactly one move
+  ok    Rh1–a1 is a legal move
+  ok    level 2 wins in one
+  ok    level 3 wins in one
+  ok    Rh1–a1 by hand is mate
+स्तराः — what a level changes
+  ok    beginner looks one ply
+  ok    intermediate two
+  ok    advanced three
+  ok    the beginner tolerates a piece
+  ok    the advanced tolerates less than a pawn
+  ok    tolerance falls with level
+पदगणना — the search is deterministic
+  ok    opening, level 1
+  ok    opening, level 2
+  ok    opening, level 3
+  ok    alpha-beta prunes the level-3 tree
+PASS — the engine reads the position

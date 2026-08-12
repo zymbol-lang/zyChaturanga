@@ -1,0 +1,25 @@
+// ============================================================
+// मानकम्/यादृच्छिकम्.zy — std/random इति स्तरस्य संस्कृतम् आवरणम्
+//
+// अत्र किमपि तर्कं नास्ति। I18N.md इति लेखस्य त्रिस्तरीयायाः
+// रीतेः द्वितीयः स्तरः — मानकसंग्रहस्य नामानि संस्कृतेन
+// पुनर्नाम्यन्ते, अन्यत् न किमपि। पठनकाले एव साक्षात्सन्दर्भं
+// प्रति निर्धार्यते, अतः कालव्ययः शून्यः।
+//
+// EN: मानकम्/यादृच्छिकम्.zy — Sanskrit layer over std/random.
+// No logic. Layer 2 of the three-layer pattern in I18N.md: it
+// renames the standard library into Sanskrit and does nothing
+// else. Resolved to direct references at load time, so it costs
+// nothing at runtime.
+// ============================================================
+
+# .मानकम्_यादृच्छिकम् {
+
+    #> {
+        यदृ::entero   => पूर्णाङ्कः
+        यदृ::rango    => परिधिः
+        यदृ::peso_f64 => भारः
+    }
+
+    <# std/random => यदृ
+}

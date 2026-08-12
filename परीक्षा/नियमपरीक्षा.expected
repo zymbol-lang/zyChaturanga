@@ -1,0 +1,48 @@
+चतुरङ्गम् — rule engine tests
+अङ्गगतिः — how the pieces move
+  ok    counsellor has 4 moves, not 28
+  ok    counsellor goes diagonally
+  ok    counsellor does not go straight
+  ok    counsellor does not go far
+  ok    elephant has 4 jumps
+  ok    elephant jumps two
+  ok    elephant skips one
+  ok    elephant leaps over a piece
+  ok    chariot takes the enemy and stops
+  ok    chariot does not pass through it
+  ok    chariot stops before its own
+  ok    chariot does not take its own
+  ok    horse has 8 moves from the centre
+  ok    horse has 2 moves from the corner
+  ok    foot soldier steps one
+  ok    foot soldier has no double step
+  ok    foot soldier takes diagonally
+  ok    foot soldier takes on the other side too
+  ok    three moves in all
+  ok    blocked foot soldier is stuck
+  ok    king has 8 moves
+प्रवर्धनम् — promotion
+  ok    foot soldier became a counsellor
+  ok    it did not become a chariot
+  ok    undo restores a foot soldier
+  ok    undo emptied the far rank
+संकटः — check
+  ok    black is not in check
+  ok    a chariot on the file gives check
+  ok    the pinned horse could move
+  ok    but the move is not legal
+अन्तः — how the game ends
+  ok    the opening game goes on
+  ok    white has 16 legal moves
+  ok    black has 16 too
+  ok    black is checkmated
+  ok    black is in check
+  ok    black has no legal move
+  ok    black is stalemated
+  ok    and is not in check
+  ok    the bare king has lost
+  ok    two bare kings is a draw
+  ok    and a draw from either side
+प्रतिलोमः — playing and taking back is the identity
+  ok    all 16 openings restore the board exactly
+PASS — every rule case behaved

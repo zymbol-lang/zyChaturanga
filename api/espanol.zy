@@ -1,0 +1,111 @@
+// ============================================================
+// api/espanol.zy — la API pública del motor con nombres españoles
+//
+// Una capa de reexportación pura: sin lógica y sin coste en
+// ejecución. Es la tercera capa del patrón de I18N.md aplicada a un
+// motor de verdad — quien escriba un frontend en español importa
+// esto y no abre nunca un fichero en devanagari.
+//
+// Las constantes se reexportan con `.` y las funciones con `::`, y
+// se leen como se declaran: `es.NEGRAS` para una constante,
+// `es::jugar(…)` para una función. Mezclarlas es un error
+// semántico, no una sorpresa en ejecución.
+//
+// Los nombres de las piezas son los del chaturanga, no los del
+// ajedrez. Un गजः es un ELEFANTE y no un alfil: salta dos casillas
+// y solo alcanza ocho de las sesenta y cuatro, cosa que ningún
+// alfil hace. Llamarlo por su descendiente sería describir otro
+// juego.
+//
+// Una cosa queda sin traducir a propósito: नियमाः::कारणसूत्रम्
+// devuelve una clave de i18n, y una clave no es una palabra.
+// Traducirla rompería justamente la búsqueda para la que existe.
+// ============================================================
+
+# .api_espanol {
+
+    #> {
+        // ---- el tablero -----------------------------------------
+        अष्ट.भुजा          => LADO
+        अष्ट.पदानि         => CASILLAS
+        अष्ट.रिक्तम्       => VACIO
+        अष्ट.श्वेतः        => BLANCAS
+        अष्ट.कृष्णः        => NEGRAS
+        अष्ट.पत्तिः        => PEON
+        अष्ट.अश्वः         => CABALLO
+        अष्ट.गजः           => ELEFANTE
+        अष्ट.रथः           => CARRO
+        अष्ट.मन्त्री       => CONSEJERO
+        अष्ट.राजा          => REY
+
+        अष्ट::नवम्         => tablero_nuevo
+        अष्ट::प्रतिकृतिः    => copiar_tablero
+        अष्ट::पदम्         => casilla
+        अष्ट::पङ्क्त्यङ्कः  => fila_de
+        अष्ट::स्तम्भाङ्कः   => columna_de
+        अष्ट::अन्तर्गतम्   => en_tablero
+        अष्ट::ग्रहणम्      => pieza_en
+        अष्ट::स्थापनम्     => colocar
+        अष्ट::रचना         => crear_pieza
+        अष्ट::अङ्गवर्णः     => color_de
+        अष्ट::अङ्गप्रकारः   => tipo_de
+        अष्ट::रिपुः        => rival
+        अष्ट::सेनास्थापनम्  => posicion_inicial
+        अष्ट::राजपदम्      => casilla_del_rey
+        अष्ट::अङ्गगणना     => contar_piezas
+        अष्ट::चालरचना      => crear_jugada
+        अष्ट::आदिपदम्      => jugada_origen
+        अष्ट::अन्तपदम्     => jugada_destino
+
+        // ---- cómo se mueven las piezas ---------------------------
+        चाल::अङ्गचालाः     => jugadas_de_pieza
+        चाल::सर्वचालाः     => jugadas_pseudolegales
+        चाल::आक्रान्तम्    => esta_atacada
+
+        // ---- las reglas ------------------------------------------
+        नि.प्रवृत्तम्      => EN_JUEGO
+        नि.मातः            => JAQUE_MATE
+        नि.गतिरोधः         => AHOGADO
+        नि.निर्वस्त्रः     => REY_DESNUDO
+        नि.समता            => TABLAS
+
+        नि::कृति           => jugar
+        नि::प्रत्यावर्तनम्  => deshacer
+        नि::संकटे          => en_jaque
+        नि::वैधः           => es_legal
+        नि::वैधचालाः       => jugadas_legales
+        नि::परिणामः        => resultado
+        नि::स्थितिसंकेतः    => huella_posicion
+        नि::कारणसूत्रम्    => clave_resultado
+
+        // ---- evaluación ------------------------------------------
+        आक.मूल्य_पत्तिः    => VALOR_PEON
+        आक.मूल्य_अश्वः     => VALOR_CABALLO
+        आक.मूल्य_गजः       => VALOR_ELEFANTE
+        आक.मूल्य_रथः       => VALOR_CARRO
+        आक.मूल्य_मन्त्री   => VALOR_CONSEJERO
+
+        आक::अङ्गमूल्यम्    => valor_pieza
+        आक::सारणी          => tablas_de_casilla
+        आक::पदमूल्यम्      => valor_casilla
+        आक::मूल्याङ्कनम्    => evaluar
+        आक::सामग्री        => material
+
+        // ---- el motor --------------------------------------------
+        मति.निम्नः         => PRINCIPIANTE
+        मति.मध्यमः         => INTERMEDIO
+        मति.उच्चः          => AVANZADO
+
+        मति::गभीरता        => profundidad_de
+        मति::विक्षेपः      => tolerancia_de
+        मति::चालचयनम्      => elegir_jugada
+        मति::गवेषणम्       => buscar
+        मति::क्रमणम्       => ordenar_jugadas
+    }
+
+    <# ../मूल/अष्टापदम् => अष्ट
+    <# ../मूल/चालाः => चाल
+    <# ../मूल/नियमाः => नि
+    <# ../मूल/आकलनम् => आक
+    <# ../मूल/मतिः => मति
+}

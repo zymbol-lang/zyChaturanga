@@ -1,0 +1,12 @@
+// ============================================================
+// chaturanga.zy — प्रवेशः, आङ्ग्लेन — यत्र देवनागरी लेखितुं कष्टम्
+//
+//   zymbol run chaturanga.zy
+//
+// EN: chaturanga.zy — entry point, English — for terminals where
+// typing Devanagari is inconvenient.
+// ============================================================
+
+<# ./क्रीडा => क्रीडा
+
+क्रीडा::आरम्भः("en")

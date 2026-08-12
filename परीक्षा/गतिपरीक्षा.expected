@@ -1,0 +1,13 @@
+चतुरङ्गम् — move generation counts
+आदिमा स्थितिः — the opening position
+  ok    perft(1) = 16
+  ok    perft(2) = 256
+  ok    perft(3) = 4176
+  ok    not 20 — no double steps in this game
+मध्यक्रीडा — a midgame position
+  ok    a symmetric position gives both sides the same count
+  ok    white to move has 26 moves
+  ok    perft(2) = 676 = 26 × 26
+गजक्षेत्रम् — the elephant reaches eight squares
+  ok    an elephant from a1 reaches 8 squares
+PASS — move generation counts hold

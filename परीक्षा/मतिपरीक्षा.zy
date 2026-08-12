@@ -1,0 +1,294 @@
+// ============================================================
+// परीक्षा/मतिपरीक्षा.zy — यन्त्रस्य मतेः परीक्षा
+//
+//   zymbol run परीक्षा/मतिपरीक्षा.zy
+//
+// मतिः यादृच्छिकम् अंशं धारयति, अतः "अयम् एव चालः" इति न
+// पृच्छ्यते। गुणाः पृच्छ्यन्ते: यत् सा कदापि अवैधं चालं न ददाति,
+// यत् मुधा स्थितम् अङ्गं गृह्णाति, यत् एकपदे मातं पश्यति, और यत्
+// उभयोः यन्त्रयोः गणना समाना।
+//
+// अन्तिमः गुणः सूक्ष्मः और महत्त्वपूर्णः: गवेषणा निर्धारिता, अतः
+// वृक्षचारी और यन्त्रकोशः समानानि पदानि गच्छतः। यदि तयोः गणना
+// भिद्येत, तर्हि एकः कुत्रचित् अन्यथा गणयति — और तत् चयने न
+// दृश्येत, यतः चयनम् अन्ते यादृच्छिकम्।
+//
+// EN: परीक्षा/मतिपरीक्षा.zy — the machine's mind
+//
+//   zymbol run परीक्षा/मतिपरीक्षा.zy
+//
+// The engine has a random component, so it is never asked "which
+// move". It is asked for properties: that it never proposes an
+// illegal move, that it takes a piece left hanging, that it sees a
+// mate in one, and that both interpreters count the same nodes.
+//
+// That last one is subtle and worth having: the search is
+// deterministic, so the tree-walker and the register VM must visit
+// exactly the same positions. If the counts ever diverged, one of
+// them would be computing something differently — and it would not
+// show in the chosen move, because the choice is random at the end.
+// ============================================================
+
+<# ../मूल/अष्टापदम् => अ
+<# ../मूल/नियमाः => नि
+<# ../मूल/आकलनम् => आक
+<# ../मूल/मतिः => मति
+<# ./आकृतिः => आ
+
+निवेदनम्(नाम, वास्तवम्, अपेक्षितम्, दोषाः<~) {
+    ? वास्तवम् == अपेक्षितम् {
+        >> "  ok    " नाम ¶
+    } _ {
+        >> "  FAIL  " नाम "   expected " अपेक्षितम् ", got " वास्तवम् ¶
+        दोषाः = दोषाः + 1
+    }
+}
+
+वैधचालः(स्थितिः<~, चालः, वर्णः) {
+    @ अन्यः : नि::वैधचालाः(स्थितिः, वर्णः) {
+        ? अन्यः == चालः { <~ #1 }
+    }
+    <~ #0
+}
+
+दोषाः = 0
+>> "चतुरङ्गम् — the engine reads the position" ¶
+>> "" ¶
+
+// ------------------------------------------------------------
+// आकलनम् — सामग्री
+// EN: material counting
+>> "आकलनम् — material" ¶
+
+आदिस्थितिः = अ::नवम्()
+अ::सेनास्थापनम्(आदिस्थितिः)
+
+// आदौ द्वयोः समा सामग्री। योगः: ८ पत्तयः ८०० + २ अश्वौ ६०० +
+// २ गजौ ३०० + २ रथौ १००० + मन्त्री २०० = २९००।
+// EN: even at the start. 8 foot soldiers 800 + 2 horses 600 +
+// 2 elephants 300 + 2 chariots 1000 + counsellor 200 = 2900.
+निवेदनम्("white starts with 2900", आक::सामग्री(आदिस्थितिः, 1), 2900, दोषाः)
+निवेदनम्("black starts with 2900", आक::सामग्री(आदिस्थितिः, 2), 2900, दोषाः)
+
+// अङ्गमूल्यानि प्राचीनस्य क्रीडायाः, न आधुनिकस्य। रथः मन्त्रिणः
+// अधिकः — आधुनिके शतरञ्जे विपरीतम्।
+// EN: the piece values are this game's, not chess's. The chariot
+// outweighs the counsellor, which is the reverse of chess.
+निवेदनम्("chariot beats counsellor", आक::अङ्गमूल्यम्(4) > आक::अङ्गमूल्यम्(5), #1, दोषाः)
+निवेदनम्("horse beats elephant", आक::अङ्गमूल्यम्(2) > आक::अङ्गमूल्यम्(3), #1, दोषाः)
+निवेदनम्("king is not material", आक::अङ्गमूल्यम्(6), 0, दोषाः)
+
+// मूल्याङ्कनं सममितम्: एकस्याः स्थितेः द्वयोः पक्षयोः दृष्टी
+// परस्परं विरुद्धे।
+// EN: the evaluation is symmetric — the same position seen from the
+// two sides must be exact opposites, or the search would gain
+// material simply by changing whose turn it is.
+सारणी = आक::सारणी()
+श्वेतदृष्टिः = आक::मूल्याङ्कनम्(आदिस्थितिः, 1, सारणी)
+कृष्णदृष्टिः = आक::मूल्याङ्कनम्(आदिस्थितिः, 2, सारणी)
+निवेदनम्("evaluation is symmetric", श्वेतदृष्टिः + कृष्णदृष्टिः, 0, दोषाः)
+निवेदनम्("the opening is level", श्वेतदृष्टिः, 0, दोषाः)
+
+// ------------------------------------------------------------
+// चयनः सर्वदा वैधः
+// EN: every chosen move is legal, at every level
+>> "" ¶
+>> "वैधता — the engine never proposes an illegal move" ¶
+
+@ स्तरः:1..3 {
+    कार्यस्थितिः = अ::प्रतिकृतिः(आदिस्थितिः)
+    पदानि = 0
+    चालः = मति::चालचयनम्(कार्यस्थितिः, 1, स्तरः, पदानि)
+    निवेदनम्("level " $++ "{स्तरः}" $++ " opens legally", वैधचालः(कार्यस्थितिः, चालः, 1), #1, दोषाः)
+}
+
+// मध्यक्रीडायाः स्थितिः — आरम्भात् भिन्ना, और अधिकतरैः चालैः।
+// EN: a midgame position, unlike the opening and with more moves.
+मध्यस्थितिः = आ::पठनम्([
+    "r...k..r",
+    "ppp..ppp",
+    "..n..n..",
+    "...pp...",
+    "...PP...",
+    "..N..N..",
+    "PPP..PPP",
+    "R...K..R"
+])
+// द्वौ गुणौ एकस्मात् एव गवेषणात् पृच्छ्येते: चालः वैधः, और
+// फलकं यथावत् त्यक्तम्। पृथक् पृच्छ्येते चेत् मध्यक्रीडायां
+// त्रिगभीरा गवेषणा द्विः चलेत्, और वृक्षचारिणि सा एव अस्याः
+// परीक्षायाः अर्धः कालः।
+//
+// गवेषणा फलकं यथावत् त्यजति — एतत् एव सर्वस्याः गवेषणायाः
+// आधारः: सहस्रशः चालाः कृताः प्रत्यावर्तिताः च, और अन्ते एकमपि
+// पदं न भिन्नम्।
+//
+// EN: Two properties from one search: that the move is legal, and
+// that the board came back untouched. Asked separately, the depth-3
+// midgame search would run twice — and in the tree-walker that
+// search alone is half the running time of this suite.
+//
+// The search leaves the board exactly as it found it: thousands of
+// moves played and taken back, and not one square different. This
+// is the property the whole thing rests on.
+@ स्तरः:1..3 {
+    कार्यस्थितिः = अ::प्रतिकृतिः(मध्यस्थितिः)
+    पदानि = 0
+    चालः = मति::चालचयनम्(कार्यस्थितिः, 1, स्तरः, पदानि)
+    निवेदनम्("level " $++ "{स्तरः}" $++ " midgame move is legal", वैधचालः(कार्यस्थितिः, चालः, 1), #1, दोषाः)
+
+    भेदाः = 0
+    @ क:1..64 {
+        ? कार्यस्थितिः[क] <> मध्यस्थितिः[क] { भेदाः = भेदाः + 1 }
+    }
+    निवेदनम्("level " $++ "{स्तरः}" $++ " left the board untouched", भेदाः, 0, दोषाः)
+}
+
+// ------------------------------------------------------------
+// मुधा स्थितम् अङ्गं गृह्णाति
+// EN: it takes a piece left hanging
+>> "" ¶
+>> "ग्रहणम् — it takes what is left hanging" ¶
+
+// कृष्णस्य रथः d५, अरक्षितः, श्वेतस्य रथेन d१ गम्यः।
+// EN: a black chariot on d5, undefended, reachable by the white
+// chariot on d1. Any level should see this — it is one ply.
+मुधास्थितिः = आ::पठनम्([
+    "....k...",
+    "........",
+    "........",
+    "...r....",
+    "........",
+    "........",
+    "........",
+    "...RK..."
+])
+@ स्तरः:1..3 {
+    कार्यस्थितिः = अ::प्रतिकृतिः(मुधास्थितिः)
+    पदानि = 0
+    चालः = मति::चालचयनम्(कार्यस्थितिः, 1, स्तरः, पदानि)
+    गन्तव्यम् = अ::अन्तपदम्(चालः)
+    निवेदनम्("level " $++ "{स्तरः}" $++ " takes the free chariot", गन्तव्यम्, आ::पदपाठः("d5"), दोषाः)
+}
+
+// ------------------------------------------------------------
+// एकपदे मातम् पश्यति
+// EN: it sees a mate in one
+>> "" ¶
+>> "मातः — it sees a mate in one" ¶
+
+// कृष्णस्य राजा a८; रथः b६ b-स्तम्भं रुणद्धि; रुद्धः पत्तिः h७।
+// कृष्णस्य एकः एव चालः: Ka७। श्वेतः Rh१–a१ इत्यनेन मातं करोति।
+//
+// अस्याः स्थितेः रचनायां द्वौ पाठौ लब्धौ, उभौ च परीक्षायाः
+// त्रुटी, न यन्त्रस्य:
+//
+// प्रथमः: कृष्णस्य पत्तिः विना राजा एकाकी स्यात्, और निर्वस्त्रस्य
+// नियमेन क्रीडा पूर्वम् एव समाप्ता — "एकेन चालेन जयति" इत्यस्य
+// अर्थः एव न स्यात्।
+//
+// द्वितीयः, सूक्ष्मतरः: पूर्वस्यां रचनायां श्वेतस्य राजा e१ आसीत्
+// और रथः h१ — अतः रथः a१ प्रति गन्तुं न शक्नोति स्म, स्वेन एव
+// राज्ञा रुद्धः। हस्तेन कृतः चालः तथापि सिद्धः, यतः कृति()
+// वैधतां न पृच्छति; यन्त्रं तु वैधान् एव चालान् पश्यति। अतः
+// परीक्षा वदति स्म "यन्त्रं जयं न पश्यति", सत्यं च आसीत् "जयः
+// तत्र न आसीत्"।
+//
+// EN: Black king on a8, the chariot on b6 sealing the b-file, a
+// blocked foot soldier on h7. Black has exactly one move, Ka7, and
+// White mates with Rh1–a1.
+//
+// Building this position taught two things, both of them mistakes
+// in the test rather than in the engine:
+//
+// First, without the black foot soldier the king stands alone, the
+// bare-king rule has already ended the game, and "wins in one"
+// would mean nothing.
+//
+// Second, and sharper: an earlier version had the white king on e1
+// and the chariot on h1, so the chariot could not reach a1 at all —
+// its own king was in the way. Played by hand the move still
+// worked, because कृति() does not ask about legality; the engine
+// only ever sees legal moves. So the test said "the engine cannot
+// see the win" when the truth was "there was no win there".
+जितम्(परिणामः) {
+    ? परिणामः == 1 { <~ #1 }
+    ? परिणामः == 2 { <~ #1 }
+    ? परिणामः == 3 { <~ #1 }
+    <~ #0
+}
+
+मातस्थितिः = आ::पठनम्([
+    "k.......",
+    ".......p",
+    ".R.....P",
+    "........",
+    "....K...",
+    "........",
+    "........",
+    ".......R"
+])
+निवेदनम्("black is not lost yet", नि::परिणामः(मातस्थितिः, 2), 0, दोषाः)
+निवेदनम्("black has exactly one move", (नि::वैधचालाः(मातस्थितिः, 2))$#, 1, दोषाः)
+निवेदनम्("Rh1–a1 is a legal move", वैधचालः(मातस्थितिः, अ::चालरचना(आ::पदपाठः("h1"), आ::पदपाठः("a1")), 1), #1, दोषाः)
+
+@ स्तरः:2..3 {
+    कार्यस्थितिः = अ::प्रतिकृतिः(मातस्थितिः)
+    पदानि = 0
+    चालः = मति::चालचयनम्(कार्यस्थितिः, 1, स्तरः, पदानि)
+    कार्यस्थितिः२ = अ::प्रतिकृतिः(मातस्थितिः)
+    गृ = 0
+    नि::कृति(कार्यस्थितिः२, चालः, गृ)
+    निवेदनम्("level " $++ "{स्तरः}" $++ " wins in one", जितम्(नि::परिणामः(कार्यस्थितिः२, 2)), #1, दोषाः)
+}
+
+// हस्तेन क्रीडितः मातचालः — यत् यन्त्रेण लब्धं तत् वस्तुतः मातः
+// एव इति दर्शयितुम्।
+// EN: the mating move played by hand, to show that what the engine
+// found really is mate and not merely some other ending.
+हस्तस्थितिः = अ::प्रतिकृतिः(मातस्थितिः)
+गृ = 0
+नि::कृति(हस्तस्थितिः, अ::चालरचना(आ::पदपाठः("h1"), आ::पदपाठः("a1")), गृ)
+निवेदनम्("Rh1–a1 by hand is mate", नि::परिणामः(हस्तस्थितिः, 2), 1, दोषाः)
+
+// ------------------------------------------------------------
+// गभीरता और विक्षेपः
+// EN: depth and tolerance — the two dials a level turns
+>> "" ¶
+>> "स्तराः — what a level changes" ¶
+निवेदनम्("beginner looks one ply", मति::गभीरता(1), 1, दोषाः)
+निवेदनम्("intermediate two", मति::गभीरता(2), 2, दोषाः)
+निवेदनम्("advanced three", मति::गभीरता(3), 3, दोषाः)
+निवेदनम्("the beginner tolerates a piece", मति::विक्षेपः(1) >= आक.मूल्य_मन्त्री, #1, दोषाः)
+निवेदनम्("the advanced tolerates less than a pawn", मति::विक्षेपः(3) < आक.मूल्य_पत्तिः, #1, दोषाः)
+निवेदनम्("tolerance falls with level", मति::विक्षेपः(1) > मति::विक्षेपः(3), #1, दोषाः)
+
+// ------------------------------------------------------------
+// पदानां गणना — निर्धारिता, उभयोः यन्त्रयोः समाना
+// EN: node counts — deterministic, and identical in both engines
+>> "" ¶
+>> "पदगणना — the search is deterministic" ¶
+
+गणय(स्थितिः, स्तरः) {
+    कार्यम् = अ::प्रतिकृतिः(स्थितिः)
+    पदानि = 0
+    _चालः = मति::चालचयनम्(कार्यम्, 1, स्तरः, पदानि)
+    <~ पदानि
+}
+
+निवेदनम्("opening, level 1", गणय(आदिस्थितिः, 1), 16, दोषाः)
+निवेदनम्("opening, level 2", गणय(आदिस्थितिः, 2), 272, दोषाः)
+निवेदनम्("opening, level 3", गणय(आदिस्थितिः, 3), 1646, दोषाः)
+
+// पूर्णा गणना विना शाखाच्छेदेन ४४४८ पदानि स्यात् (गतिपरीक्षा
+// तत् मापयति)। १६४६ इति अल्फा-बीटा एव — प्रायः त्रिगुणं न्यूनम्।
+// EN: without pruning the same tree is 4448 nodes — गतिपरीक्षा
+// measures exactly that. 1646 is alpha-beta doing its work.
+निवेदनम्("alpha-beta prunes the level-3 tree", 1646 < 4448, #1, दोषाः)
+
+>> "" ¶
+? दोषाः == 0 {
+    >> "PASS — the engine reads the position" ¶
+} _ {
+    >> "FAIL — " दोषाः " problem(s)" ¶
+}

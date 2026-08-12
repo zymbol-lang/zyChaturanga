@@ -1,0 +1,141 @@
+// ============================================================
+// भाषा/English.zy — आङ्ग्लम् (en)
+// प्रतिज्ञातानि कार्याणि: शब्दः · अङ्गनाम · जयवाक्यम् · ग्रहणवाक्यम्
+// सूत्राणि संस्कृतानि; आधारः भाषा/संस्कृतम्.zy इति सञ्चिकायाम्।
+//
+// EN: भाषा/English.zy — English locale (en)
+// Interface contract: शब्दः · अङ्गनाम · जयवाक्यम् · ग्रहणवाक्यम्
+// The keys are Sanskrit; the base lives in भाषा/संस्कृतम्.zy.
+//
+// The piece names are the chaturanga ones, not the chess ones. A
+// गजः is an elephant and not a bishop: it jumps two squares and
+// reaches eight of them, which no bishop does. Calling it a bishop
+// would name the descendant and describe the ancestor.
+// ============================================================
+
+# .भाषा_English {
+
+    #> { शब्दः, अङ्गनाम, जयवाक्यम्, ग्रहणवाक्यम् }
+
+    शब्दः(सूत्रम्) {
+        <~ ?? सूत्रम् {
+            "भाषा.नाम"                  => "English"
+
+            "सूची.शीर्षकम्"             => "Chaturanga"
+            "सूची.स्तरः"                => "Level"
+            "सूची.पक्षः"                => "Your side"
+            "सूची.रूपम्"                => "Pieces"
+            "सूची.फलकम्"                => "Board"
+            "सूची.भाषा"                 => "Language"
+            "सूची.निर्देशः"             => "↑↓ select   ←→ change   ↵ start"
+            "सूची.अशक्यम्"              => "screen too small"
+
+            "स्तर.१"                    => "Beginner"
+            "स्तर.२"                    => "Intermediate"
+            "स्तर.३"                    => "Advanced"
+
+            "रूप.शतरञ्जम्"              => "Chess symbols"
+            "रूप.चित्रम्"               => "Pictures"
+            "रूप.अक्षरम्"               => "Devanagari"
+            "रूप.लातिनम्"               => "Latin"
+            "फलक.अष्टापदम्"             => "Ashtapada"
+            "फलक.चित्रितम्"             => "Chequered"
+
+            "वर्ण.श्वेतः"               => "White"
+            "वर्ण.कृष्णः"               => "Black"
+            "पक्ष.मनुष्यः"              => "you"
+            "पक्ष.यन्त्रम्"             => "computer"
+
+            "अङ्ग.पत्तिः"               => "foot soldier"
+            "अङ्ग.अश्वः"                => "horse"
+            "अङ्ग.गजः"                  => "elephant"
+            "अङ्ग.रथः"                  => "chariot"
+            "अङ्ग.मन्त्री"              => "counsellor"
+            "अङ्ग.राजा"                 => "king"
+
+            "खण्ड.हस्तः"                => "Turn"
+            "खण्ड.चालसंख्या"            => "Moves"
+            "खण्ड.गृहीतानि"             => "Taken"
+            "खण्ड.स्तरः"                => "Level"
+            "खण्ड.अन्तिमः"              => "Last"
+            "खण्ड.सामग्री"              => "Material"
+
+            "वार्ता.अवैधः"              => "that move is not allowed"
+            "वार्ता.रिक्तम्"            => "there is no piece there"
+            "वार्ता.परकीयम्"            => "that is not your piece"
+            "वार्ता.स्वसंकटे"           => "that would leave your king in check"
+            "वार्ता.संकटे"              => "check!"
+            "वार्ता.चिन्तयति"           => "thinking…"
+            "वार्ता.प्रत्यावृत्तिः"     => "took the move back"
+            "वार्ता.प्रत्यावृत्तिनास्ति" => "nothing left to take back"
+            "वार्ता.प्रवर्धनम्"         => "the foot soldier became a counsellor"
+            "वार्ता.त्यागः"             => "resigned"
+
+            "अन्तः.शीर्षकम्"            => "Game over"
+            "अन्तः.मातः"                => "Checkmate"
+            "अन्तः.गतिरोधः"             => "Stalemate"
+            "अन्तः.निर्वस्त्रः"         => "Bare king"
+            "अन्तः.समता"                => "Draw"
+            "अन्तः.पुनरावृत्तिः"        => "Repetition"
+            "अन्तः.जयः"                 => "Win"
+
+            "सञ्चालन.शीर्षकम्"          => "Controls"
+            "सञ्चालन.गतिः"              => "move the cursor"
+            "सञ्चालन.चयनम्"             => "pick a piece · play the move"
+            "सञ्चालन.निरसनम्"           => "cancel the selection"
+            "सञ्चालन.प्रत्यावृत्तिः"    => "take the move back"
+            "सञ्चालन.रूपान्तरम्"        => "cycle the pieces"
+            "सञ्चालन.साहाय्यम्"         => "help"
+            "सञ्चालन.त्यागः"            => "resign · quit"
+
+            "पटल.संकीर्णम्"             => "terminal too small"
+
+            _                            => सूत्रम्
+        }
+    }
+
+    अङ्गनाम(प्रकारः) {
+        <~ ?? प्रकारः {
+            १ => "foot soldier"
+            २ => "horse"
+            ३ => "elephant"
+            ४ => "chariot"
+            ५ => "counsellor"
+            ६ => "king"
+            _ => ""
+        }
+    }
+
+    // "wins by mate", but "wins by baring the king" — the cause is
+    // a noun in one case and a gerund in the other, which is the
+    // sort of thing a lookup table cannot hold.
+    _कारणपदम्(कारणम्) {
+        <~ ?? कारणम् {
+            १ => "by checkmate"
+            २ => "by stalemate"
+            ३ => "by baring the king"
+            ५ => "by resignation"
+            _ => ""
+        }
+    }
+
+    जयवाक्यम्(वर्णः, कारणम्) {
+        ? कारणम् == ४ { <~ "Draw" }
+        ? कारणम् == ६ { <~ "Draw by repetition" }
+        जेता = "White"
+        ? वर्णः == २ { जेता = "Black" }
+        पदम् = _कारणपदम्(कारणम्)
+        ? पदम् == "" { <~ "{जेता} wins" }
+        <~ "{जेता} wins {पदम्}"
+    }
+
+    // "a horse was taken" needs the article the Sanskrit and Persian
+    // sentences do without, and English is the only one of the five
+    // that needs it to vary — "an elephant".
+    ग्रहणवाक्यम्(प्रकारः) {
+        नाम = अङ्गनाम(प्रकारः)
+        ? नाम == "" { <~ "" }
+        ? प्रकारः == ३ { <~ "took an elephant" }
+        <~ "took a {नाम}"
+    }
+}

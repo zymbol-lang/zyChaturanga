@@ -1,0 +1,25 @@
+// ============================================================
+// मानकम्/पटलम्.zy — std/term इति स्तरस्य संस्कृतम् आवरणम्
+//
+// दर्शनम्/अक्षरम्.zy अत्र एव स्तम्भानां प्रश्नं प्रेषयति।
+// स्तम्भसंख्या अक्षरसंख्या न; तस्य उत्तरं मानकसंग्रहः धारयति,
+// अयं च स्तरः तत् संस्कृतनाम्ना समर्पयति।
+//
+// EN: मानकम्/पटलम्.zy — Sanskrit layer over std/term.
+// Where दर्शनम्/अक्षरम्.zy sends every column question. Column
+// count is not grapheme count; the standard library owns that
+// answer and this layer only hands it over under Sanskrit names.
+// ============================================================
+
+# .मानकम्_पटलम् {
+
+    #> {
+        पट::width     => विस्तारः
+        पट::pad_left  => वामपूरणम्
+        पट::pad_right => दक्षिणपूरणम्
+        पट::center    => मध्यस्थम्
+        पट::truncate  => छेदनम्
+    }
+
+    <# std/term => पट
+}

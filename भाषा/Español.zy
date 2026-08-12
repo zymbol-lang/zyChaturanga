@@ -1,0 +1,140 @@
+// ============================================================
+// भाषा/Español.zy — स्पानिश् (es)
+// प्रतिज्ञातानि कार्याणि: शब्दः · अङ्गनाम · जयवाक्यम् · ग्रहणवाक्यम्
+// सूत्राणि संस्कृतानि; आधारः भाषा/संस्कृतम्.zy इति सञ्चिकायाम्।
+//
+// EN: भाषा/Español.zy — Spanish locale (es)
+// Interface contract: शब्दः · अङ्गनाम · जयवाक्यम् · ग्रहणवाक्यम्
+// The keys are Sanskrit; the base lives in भाषा/संस्कृतम्.zy.
+//
+// Spanish is the locale that forces the composed sentences to be
+// functions rather than a table: the colours are feminine
+// ("las blancas") and the pieces are not ("el elefante", "la
+// torre"), so both the winner clause and the capture clause have to
+// agree with something the key does not know.
+// ============================================================
+
+# .भाषा_Español {
+
+    #> { शब्दः, अङ्गनाम, जयवाक्यम्, ग्रहणवाक्यम् }
+
+    शब्दः(सूत्रम्) {
+        <~ ?? सूत्रम् {
+            "भाषा.नाम"                  => "Español"
+
+            "सूची.शीर्षकम्"             => "Chaturanga"
+            "सूची.स्तरः"                => "Nivel"
+            "सूची.पक्षः"                => "Tu color"
+            "सूची.रूपम्"                => "Piezas"
+            "सूची.फलकम्"                => "Tablero"
+            "सूची.भाषा"                 => "Idioma"
+            "सूची.निर्देशः"             => "↑↓ elegir   ←→ cambiar   ↵ empezar"
+            "सूची.अशक्यम्"              => "pantalla pequeña"
+
+            "स्तर.१"                    => "Principiante"
+            "स्तर.२"                    => "Intermedio"
+            "स्तर.३"                    => "Avanzado"
+
+            "रूप.शतरञ्जम्"              => "Símbolos de ajedrez"
+            "रूप.चित्रम्"               => "Dibujos"
+            "रूप.अक्षरम्"               => "Devanagari"
+            "रूप.लातिनम्"               => "Latinas"
+            "फलक.अष्टापदम्"             => "Ashtapada"
+            "फलक.चित्रितम्"             => "Escaqueado"
+
+            "वर्ण.श्वेतः"               => "Blancas"
+            "वर्ण.कृष्णः"               => "Negras"
+            "पक्ष.मनुष्यः"              => "tú"
+            "पक्ष.यन्त्रम्"             => "máquina"
+
+            "अङ्ग.पत्तिः"               => "peón"
+            "अङ्ग.अश्वः"                => "caballo"
+            "अङ्ग.गजः"                  => "elefante"
+            "अङ्ग.रथः"                  => "carro"
+            "अङ्ग.मन्त्री"              => "consejero"
+            "अङ्ग.राजा"                 => "rey"
+
+            "खण्ड.हस्तः"                => "Turno"
+            "खण्ड.चालसंख्या"            => "Jugadas"
+            "खण्ड.गृहीतानि"             => "Capturas"
+            "खण्ड.स्तरः"                => "Nivel"
+            "खण्ड.अन्तिमः"              => "Última"
+            "खण्ड.सामग्री"              => "Material"
+
+            "वार्ता.अवैधः"              => "esa jugada no vale"
+            "वार्ता.रिक्तम्"            => "ahí no hay ninguna pieza"
+            "वार्ता.परकीयम्"            => "esa pieza no es tuya"
+            "वार्ता.स्वसंकटे"           => "eso dejaría a tu rey en jaque"
+            "वार्ता.संकटे"              => "¡jaque!"
+            "वार्ता.चिन्तयति"           => "pensando…"
+            "वार्ता.प्रत्यावृत्तिः"     => "jugada deshecha"
+            "वार्ता.प्रत्यावृत्तिनास्ति" => "no queda nada que deshacer"
+            "वार्ता.प्रवर्धनम्"         => "el peón se hizo consejero"
+            "वार्ता.त्यागः"             => "abandonó"
+
+            "अन्तः.शीर्षकम्"            => "Fin de la partida"
+            "अन्तः.मातः"                => "Jaque mate"
+            "अन्तः.गतिरोधः"             => "Ahogado"
+            "अन्तः.निर्वस्त्रः"         => "Rey desnudo"
+            "अन्तः.समता"                => "Tablas"
+            "अन्तः.पुनरावृत्तिः"        => "Repetición"
+            "अन्तः.जयः"                 => "Victoria"
+
+            "सञ्चालन.शीर्षकम्"          => "Teclas"
+            "सञ्चालन.गतिः"              => "mover el cursor"
+            "सञ्चालन.चयनम्"             => "elegir pieza · jugar"
+            "सञ्चालन.निरसनम्"           => "cancelar la selección"
+            "सञ्चालन.प्रत्यावृत्तिः"    => "deshacer la jugada"
+            "सञ्चालन.रूपान्तरम्"        => "cambiar las piezas"
+            "सञ्चालन.साहाय्यम्"         => "ayuda"
+            "सञ्चालन.त्यागः"            => "abandonar · salir"
+
+            "पटल.संकीर्णम्"             => "terminal demasiado pequeña"
+
+            _                            => सूत्रम्
+        }
+    }
+
+    अङ्गनाम(प्रकारः) {
+        <~ ?? प्रकारः {
+            १ => "peón"
+            २ => "caballo"
+            ३ => "elefante"
+            ४ => "carro"
+            ५ => "consejero"
+            ६ => "rey"
+            _ => ""
+        }
+    }
+
+    _कारणपदम्(कारणम्) {
+        <~ ?? कारणम् {
+            १ => "por jaque mate"
+            २ => "por ahogado"
+            ३ => "por rey desnudo"
+            ५ => "por abandono"
+            _ => ""
+        }
+    }
+
+    // Los colores son femeninos plurales: «las blancas ganan».
+    जयवाक्यम्(वर्णः, कारणम्) {
+        ? कारणम् == ४ { <~ "Tablas" }
+        ? कारणम् == ६ { <~ "Tablas por repetición" }
+        जेता = "las blancas"
+        ? वर्णः == २ { जेता = "las negras" }
+        पदम् = _कारणपदम्(कारणम्)
+        ? पदम् == "" { <~ "ganan {जेता}" }
+        <~ "ganan {जेता} {पदम्}"
+    }
+
+    // Todas las piezas son masculinas en español, así que el
+    // artículo no varía — pero la frase se compone igual, porque
+    // que hoy no varíe es un accidente del vocabulario y no una
+    // propiedad del idioma.
+    ग्रहणवाक्यम्(प्रकारः) {
+        नाम = अङ्गनाम(प्रकारः)
+        ? नाम == "" { <~ "" }
+        <~ "capturó el {नाम}"
+    }
+}

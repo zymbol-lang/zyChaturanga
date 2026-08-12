@@ -1,0 +1,23 @@
+// ============================================================
+// चतुरङ्गम्.zy — प्रवेशः, संस्कृतेन
+//
+// चत्वारः प्रवेशाः केवलं तया भाषया भिद्यन्ते या पूर्वं चीयते।
+// प्रत्येकस्मात् प्रवेशात् सज्जायाः पटले भाषा परिवर्तनीया — अत्र
+// तु एतावत् एव निर्णीयते यत् तत् पटलं स्वयं कया भाषया वदति।
+//
+//   zymbol run चतुरङ्गम्.zy
+//   zymbol run --vm चतुरङ्गम्.zy      (शीघ्रतरम्; उच्चे स्तरे विशेषेण)
+//
+// EN: चतुरङ्गम्.zy — entry point, Sanskrit
+//
+// The four entry points differ only in the locale they preselect,
+// and every one of them can change language from the setup screen.
+// This decides which language the setup screen itself speaks.
+//
+//   zymbol run चतुरङ्गम्.zy
+//   zymbol run --vm चतुरङ्गम्.zy      (much faster; matters at the top level)
+// ============================================================
+
+<# ./क्रीडा => क्रीडा
+
+क्रीडा::आरम्भः("sa")

@@ -1,0 +1,110 @@
+// ============================================================
+// api/english.zy — the engine's public API under English names
+//
+// A pure re-export layer: no logic, no runtime cost. This is layer
+// three of the pattern in I18N.md, applied to a working engine —
+// somebody writing a front-end in English imports this and never
+// opens a Devanagari source file.
+//
+// Constants re-export with `.` and functions with `::`, and they are
+// read the way they are declared: `en.BLACK` for a constant,
+// `en::play(…)` for a function. Mixing the two is a semantic error,
+// not a runtime surprise.
+//
+// The piece names are chaturanga's, not chess's. A गजः is an
+// ELEPHANT and not a bishop — it jumps two squares and reaches
+// eight of them, which no bishop does. Naming it for its descendant
+// would describe the wrong game.
+//
+// One thing is deliberately *not* translated: नियमाः::कारणसूत्रम्
+// returns an i18n key, and a key is not a word. Translating a key
+// would break the very lookup it exists for.
+// ============================================================
+
+# .api_english {
+
+    #> {
+        // ---- the board ------------------------------------------
+        अष्ट.भुजा          => SIDE
+        अष्ट.पदानि         => SQUARES
+        अष्ट.रिक्तम्       => EMPTY
+        अष्ट.श्वेतः        => WHITE
+        अष्ट.कृष्णः        => BLACK
+        अष्ट.पत्तिः        => FOOT_SOLDIER
+        अष्ट.अश्वः         => HORSE
+        अष्ट.गजः           => ELEPHANT
+        अष्ट.रथः           => CHARIOT
+        अष्ट.मन्त्री       => COUNSELLOR
+        अष्ट.राजा          => KING
+
+        अष्ट::नवम्         => new_board
+        अष्ट::प्रतिकृतिः    => copy_board
+        अष्ट::पदम्         => square
+        अष्ट::पङ्क्त्यङ्कः  => rank_of
+        अष्ट::स्तम्भाङ्कः   => file_of
+        अष्ट::अन्तर्गतम्   => on_board
+        अष्ट::ग्रहणम्      => piece_at
+        अष्ट::स्थापनम्     => place
+        अष्ट::रचना         => make_piece
+        अष्ट::अङ्गवर्णः     => colour_of
+        अष्ट::अङ्गप्रकारः   => kind_of
+        अष्ट::रिपुः        => opponent
+        अष्ट::सेनास्थापनम्  => setup
+        अष्ट::राजपदम्      => king_square
+        अष्ट::अङ्गगणना     => count_pieces
+        अष्ट::चालरचना      => make_move
+        अष्ट::आदिपदम्      => move_from
+        अष्ट::अन्तपदम्     => move_to
+
+        // ---- how the pieces move ---------------------------------
+        चाल::अङ्गचालाः     => piece_moves
+        चाल::सर्वचालाः     => pseudo_legal_moves
+        चाल::आक्रान्तम्    => is_attacked
+
+        // ---- the rules -------------------------------------------
+        नि.प्रवृत्तम्      => ONGOING
+        नि.मातः            => CHECKMATE
+        नि.गतिरोधः         => STALEMATE
+        नि.निर्वस्त्रः     => BARE_KING
+        नि.समता            => DRAW
+
+        नि::कृति           => play
+        नि::प्रत्यावर्तनम्  => undo
+        नि::संकटे          => in_check
+        नि::वैधः           => is_legal
+        नि::वैधचालाः       => legal_moves
+        नि::परिणामः        => outcome
+        नि::स्थितिसंकेतः    => position_hash
+        नि::कारणसूत्रम्    => outcome_key
+
+        // ---- evaluation ------------------------------------------
+        आक.मूल्य_पत्तिः    => VALUE_FOOT_SOLDIER
+        आक.मूल्य_अश्वः     => VALUE_HORSE
+        आक.मूल्य_गजः       => VALUE_ELEPHANT
+        आक.मूल्य_रथः       => VALUE_CHARIOT
+        आक.मूल्य_मन्त्री   => VALUE_COUNSELLOR
+
+        आक::अङ्गमूल्यम्    => piece_value
+        आक::सारणी          => square_tables
+        आक::पदमूल्यम्      => square_value
+        आक::मूल्याङ्कनम्    => evaluate
+        आक::सामग्री        => material
+
+        // ---- the engine ------------------------------------------
+        मति.निम्नः         => BEGINNER
+        मति.मध्यमः         => INTERMEDIATE
+        मति.उच्चः          => ADVANCED
+
+        मति::गभीरता        => depth_for
+        मति::विक्षेपः      => tolerance_for
+        मति::चालचयनम्      => choose_move
+        मति::गवेषणम्       => search
+        मति::क्रमणम्       => order_moves
+    }
+
+    <# ../मूल/अष्टापदम् => अष्ट
+    <# ../मूल/चालाः => चाल
+    <# ../मूल/नियमाः => नि
+    <# ../मूल/आकलनम् => आक
+    <# ../मूल/मतिः => मति
+}

@@ -1,0 +1,237 @@
+// ============================================================
+// मूल/अष्टापदम्.zy — अष्टापदस्य रचना
+//
+// स्थितिः इति चतुःषष्टिपदानां समतलः संग्रहः, यस्य अङ्काः एकतः
+// आरभन्ते। पदम् (पङ्क्तिः, स्तम्भः) इति अङ्के (पङ्क्तिः - १) × ८ +
+// स्तम्भः तिष्ठति। पङ्क्तिः १ श्वेतस्य गृहम्, पङ्क्तिः ८ कृष्णस्य।
+// दर्शनस्तरः एव पङ्क्तीः विपर्यस्यति; मूलम् एतत् न जानाति।
+//
+// अङ्गानि ऋणात्मकानि न सन्ति। श्वेतस्य अङ्गानि १..६, कृष्णस्य
+// ७..१२। एवं सर्वः संग्रहः अऋणः, यथा प्रत्येकं पदं शून्येन
+// रिक्तम् इति वक्तुं शक्यते।
+//
+// सर्वे अङ्काः देवनागर्यां लिख्यन्ते — नामानि, अक्षराणि, सङ्ख्याः
+// च एकस्यां लिप्याम्। एतत् एव अस्य कार्यस्य मूलम्।
+//
+// EN: मूल/अष्टापदम्.zy — the ashtapada, its shape
+//
+// A position (स्थितिः) is a flat array of 64 squares, 1-indexed.
+// Square (row, col) lives at index (row - 1) × 8 + col, with row 1
+// the white home rank and row 8 the black one. The display layer
+// flips rows so row 1 is drawn at the bottom; the engine never
+// needs to know.
+//
+// Piece codes are never negative. White pieces are 1..6 and black
+// pieces are 7..12, so the whole array stays non-negative and 0
+// means "empty" everywhere without a sign convention to remember.
+// This is deliberate: an earlier draft stored black as the negative
+// of white, and every piece test then had to normalise the sign
+// before it could ask what kind of piece it had.
+//
+// Numerals are Devanagari throughout — identifiers, literals and
+// output in one script. That is the point of the exercise, not a
+// decoration on it.
+// ============================================================
+
+# .मूल_अष्टापदम् {
+
+    #> {
+        भुजा
+        पदानि
+        रिक्तम्
+        श्वेतः
+        कृष्णः
+        पत्तिः
+        अश्वः
+        गजः
+        रथः
+        मन्त्री
+        राजा
+        नवम्
+        प्रतिकृतिः
+        पदम्
+        पङ्क्त्यङ्कः
+        स्तम्भाङ्कः
+        अन्तर्गतम्
+        ग्रहणम्
+        स्थापनम्
+        रचना
+        अङ्गवर्णः
+        अङ्गप्रकारः
+        रिपुः
+        सेनास्थापनम्
+        राजपदम्
+        अङ्गगणना
+        चालरचना
+        आदिपदम्
+        अन्तपदम्
+    }
+
+    // अष्टापदम् = अष्ट + पद, "यस्य अष्टौ पदानि" — फलकस्य नाम एव
+    // तस्य मानम्।
+    // EN: अष्टापदम् is "the eight-stepped": the board's own name is
+    // its measurement, which is why the side length is not a
+    // parameter here the way 路 is in a go engine.
+    भुजा  := ८
+    पदानि := ६४
+
+    रिक्तम् := ०
+
+    श्वेतः := १
+    कृष्णः := २
+
+    // चतुरङ्गम् = चत्वारि अङ्गानि: पत्तयः, अश्वाः, रथाः, गजाः।
+    // तेषाम् उपरि मन्त्री राजा च, यौ सेनायाः अङ्गे न, नायकौ।
+    // क्रमः मूल्येन न, प्राचीनेन सैन्यक्रमेण।
+    //
+    // EN: चतुरङ्गम् means "four limbs": foot, horse, chariot,
+    // elephant — the four divisions of an Indian army. The counsellor
+    // and the king sit above them and are not limbs but commanders.
+    // The order below is the army's, not a ranking by value: in this
+    // game the chariot is worth more than the counsellor.
+    पत्तिः  := १
+    अश्वः   := २
+    गजः     := ३
+    रथः     := ४
+    मन्त्री := ५
+    राजा    := ६
+
+    नवम्() {
+        स्थितिः = []
+        @ _अङ्कः:१..६४ { स्थितिः = स्थितिः $+ ० }
+        <~ स्थितिः
+    }
+
+    प्रतिकृतिः(स्थितिः) {
+        प्रति = []
+        @ मूल्यम् : स्थितिः { प्रति = प्रति $+ मूल्यम् }
+        <~ प्रति
+    }
+
+    // सर्वे गणिताः अङ्काः अत्रैव जायन्ते।
+    // EN: Every computed index is born here.
+    पदम्(पङ्क्तिः, स्तम्भः) { <~ (पङ्क्तिः - १) * ८ + स्तम्भः }
+    पङ्क्त्यङ्कः(स्थानम्) { <~ (स्थानम् - १) / ८ + १ }
+    स्तम्भाङ्कः(स्थानम्) { <~ स्थानम् - ((स्थानम् - १) / ८) * ८ }
+
+    अन्तर्गतम्(पङ्क्तिः, स्तम्भः) {
+        ? पङ्क्तिः < १ { <~ #० }
+        ? पङ्क्तिः > ८ { <~ #० }
+        ? स्तम्भः < १ { <~ #० }
+        ? स्तम्भः > ८ { <~ #० }
+        <~ #१
+    }
+
+    ग्रहणम्(स्थितिः, पङ्क्तिः, स्तम्भः) { <~ स्थितिः[पदम्(पङ्क्तिः, स्तम्भः)] }
+
+    स्थापनम्(स्थितिः<~, पङ्क्तिः, स्तम्भः, अङ्गम्) {
+        स्थितिः[पदम्(पङ्क्तिः, स्तम्भः)] = अङ्गम्
+    }
+
+    // वर्णः च प्रकारः च एकस्मिन् अङ्के। श्वेतम् १..६, कृष्णम् ७..१२।
+    // EN: Colour and kind packed into one code — white 1..6, black
+    // 7..12. Two functions unpack it and one builds it, and nothing
+    // else in the program knows the packing.
+    रचना(वर्णः, प्रकारः) {
+        ? वर्णः == १ { <~ प्रकारः }
+        <~ प्रकारः + ६
+    }
+
+    अङ्गवर्णः(अङ्गम्) {
+        ? अङ्गम् == ० { <~ ० }
+        ? अङ्गम् <= ६ { <~ १ }
+        <~ २
+    }
+
+    अङ्गप्रकारः(अङ्गम्) {
+        ? अङ्गम् == ० { <~ ० }
+        ? अङ्गम् <= ६ { <~ अङ्गम् }
+        <~ अङ्गम् - ६
+    }
+
+    रिपुः(वर्णः) {
+        ? वर्णः == १ { <~ २ }
+        <~ १
+    }
+
+    // आदिमा सेना। रथः अश्वः गजः मन्त्री राजा गजः अश्वः रथः।
+    //
+    // राजानौ एकस्मिन् स्तम्भे सम्मुखौ, मन्त्रिणौ च — यथा शतरञ्जे
+    // तथैव। एतत् सर्वेषु पुनर्निर्माणेषु न समानम्; केचन राजानं
+    // चतुर्थे स्तम्भे स्थापयन्ति। अत्र प्रचलितः क्रमः गृहीतः,
+    // येन पदावली अन्तर्राष्ट्रीयेन सह मिलति।
+    //
+    // EN: The opening army: chariot, horse, elephant, counsellor,
+    // king, elephant, horse, chariot.
+    //
+    // Kings face each other on one file and counsellors on another,
+    // as in chess. Reconstructions differ — some place the king on
+    // the fourth file instead — and the common arrangement is taken
+    // here so that recorded games read the same as chess notation.
+    सेनास्थापनम्(स्थितिः<~) {
+        गृहपङ्क्तिः = [४, २, ३, ५, ६, ३, २, ४]
+        @ स्तम्भः:१..८ {
+            प्रकारः = गृहपङ्क्तिः[स्तम्भः]
+            स्थापनम्(स्थितिः, १, स्तम्भः, रचना(१, प्रकारः))
+            स्थापनम्(स्थितिः, २, स्तम्भः, रचना(१, १))
+            स्थापनम्(स्थितिः, ७, स्तम्भः, रचना(२, १))
+            स्थापनम्(स्थितिः, ८, स्तम्भः, रचना(२, प्रकारः))
+        }
+    }
+
+    // राज्ञः पदम्। न चेत् अस्ति, ० — निर्वस्त्रराजस्य परीक्षायाम्
+    // एतत् सम्भवति, यत्र राजा गृहीतः इति न, किन्तु आकृतिः अपूर्णा।
+    //
+    // EN: The king's square, or 0 when that colour has no king on
+    // the board. That is not a lost game — a king is never captured
+    // — but a test diagram that simply does not draw one, which the
+    // rule tests rely on.
+    राजपदम्(स्थितिः, वर्णः) {
+        लक्ष्यम् = रचना(वर्णः, ६)
+        @ स्थानम्:१..६४ {
+            ? स्थितिः[स्थानम्] == लक्ष्यम् { <~ स्थानम् }
+        }
+        <~ ०
+    }
+
+    // वर्णस्य अङ्गानां संख्या। प्रकारः ० चेत्, सर्वाणि गण्यन्ते।
+    // EN: How many pieces a colour has; kind 0 counts them all.
+    अङ्गगणना(स्थितिः, वर्णः, प्रकारः) {
+        संख्या = ०
+        @ स्थानम्:१..६४ {
+            अङ्गम् = स्थितिः[स्थानम्]
+            ? अङ्गम् <> ० {
+                ? अङ्गवर्णः(अङ्गम्) == वर्णः {
+                    ? प्रकारः == ० { संख्या = संख्या + १ } _ {
+                        ? अङ्गप्रकारः(अङ्गम्) == प्रकारः { संख्या = संख्या + १ }
+                    }
+                }
+            }
+        }
+        <~ संख्या
+    }
+
+    // चालः एकः पूर्णाङ्कः: आदिपदम् × १०० + अन्तपदम्।
+    //
+    // द्वयोः अङ्कयोः संग्रहः न गृहीतः। चालानाम् उत्पादनं गवेषणायाः
+    // अन्तरतमे वर्तते, तत्र च संग्रहस्य संग्रहः प्रतिचालं द्वौ
+    // आवण्टनौ याचते। पूर्णाङ्कः एकम् अपि न याचते।
+    //
+    // प्रवर्धनम् अत्र न लिख्यते। प्राचीने चतुरङ्गे पत्तिः मन्त्रिणम्
+    // एव प्राप्नोति — विकल्पः नास्ति — अतः चालात् एव ज्ञायते।
+    //
+    // EN: A move is one integer: from × 100 + to.
+    //
+    // Not a two-element array. Move generation sits in the innermost
+    // loop of the search, where an array per move costs two
+    // allocations and an integer costs none. The decimal packing is
+    // also readable in a debugger — १२३४ is १२ → ३४.
+    //
+    // No promotion field. In historical chaturanga a foot soldier
+    // promotes to a counsellor and to nothing else, so the promotion
+    // is implied by the move rather than chosen with it. That is one
+    // of the few places where the old game is simpler than the new.
+    चालरचना(आदिः, अन्तः) { <~ आदिः * १०० + अन्तः }
+    आदिपदम्(चालः) { <~ चालः / १०० }
+    अन्तपदम्(चालः) { <~ चालः - (चालः / १००) * १०० }
+}

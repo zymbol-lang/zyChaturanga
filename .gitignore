@@ -1,0 +1,11 @@
+# Editor and OS noise
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Zymbol standalone build output
+*.out
+
+# Packaged archives are built from source, not committed
+*.zyp

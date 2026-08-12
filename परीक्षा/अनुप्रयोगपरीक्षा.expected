@@ -1,0 +1,44 @@
+चतुरङ्गम् — api/english and api/espanol
+नियतांशाः — constants
+  ok    EMPTY
+  ok    WHITE
+  ok    BLACK
+  ok    ELEPHANT
+  ok    CHARIOT
+  ok    COUNSELLOR
+  ok    VACIO
+  ok    BLANCAS
+  ok    NEGRAS
+  ok    ELEFANTE
+  ok    CHECKMATE
+  ok    AHOGADO
+  ok    BARE_KING
+  ok    VALOR_CARRO
+  ok    ADVANCED
+कार्याणि — functions
+  ok    square
+  ok    casilla
+  ok    rank_of
+  ok    columna_de
+  ok    opponent
+  ok    rival
+  ok    make_piece
+  ok    kind_of
+  ok    color_de
+  ok    piece_value
+  ok    valor_pieza
+समता — the same moves under three names
+  ok    the three openings are identical
+  ok    play captured the same piece
+  ok    jugar captured the same piece
+  ok    it was a chariot
+  ok    the three boards agree after the capture
+  ok    undo restored the position
+फलम् — outcomes
+  ok    legal_moves agrees
+  ok    jugadas_legales agrees
+  ok    outcome agrees
+  ok    material agrees
+  ok    outcome_key returns the key untranslated
+  ok    clave_resultado does the same
+PASS — api/english and api/espanol resolve to the same engine

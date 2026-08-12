@@ -1,0 +1,187 @@
+// ============================================================
+// परीक्षा/गतिपरीक्षा.zy — चालोत्पादनस्य गणना
+//
+//   zymbol run परीक्षा/गतिपरीक्षा.zy
+//
+// परिगणना (perft): गभीरतां यावत् सर्वे वैधाः चालाः गण्यन्ते।
+// एकः एव अङ्कः, किन्तु सः सर्वं परीक्षते — गतिनियमान्, वैधताम्,
+// कृतिं, प्रत्यावर्तनं च। यदि एकम् अङ्गम् एकं चालम् अधिकं वा
+// न्यूनं वा उत्पादयेत्, अङ्कः भिद्येत।
+//
+// आदिमायाः स्थितेः प्रथमौ द्वौ अङ्कौ हस्तेन गणयितुं शक्यौ, और
+// तत् एव तयोः मूल्यम्:
+//
+//   १६ = ८ पत्तयः (एकैकं पदम्) + ४ अश्वचालाः + ४ गजचालाः।
+//        रथाः, मन्त्री, राजा च सर्वे रुद्धाः।
+//        आधुनिके शतरञ्जे विंशतिः, यतः तत्र पत्तिः द्विपदं गच्छति।
+//
+//   २५६ = १६ × १६, यतः श्वेतस्य प्रथमः चालः कृष्णस्य किमपि न
+//        स्पृशति — एकोऽपि चालः षष्ठीं पङ्क्तिं न प्राप्नोति।
+//
+// तृतीयः अङ्कः हस्तेन न गण्यः। स तु प्रत्यभिज्ञानम् एव: यदि
+// कदाचित् परिवर्तेत, किमपि परिवर्तितम्।
+//
+// EN: परीक्षा/गतिपरीक्षा.zy — counting move generation
+//
+//   zymbol run परीक्षा/गतिपरीक्षा.zy
+//
+// Perft: count every legal move sequence to a given depth. One
+// number, and it tests everything — the movement rules, legality,
+// कृति and प्रत्यावर्तनम् together. If any piece generated one move
+// too many or too few, the number changes.
+//
+// The first two are derivable by hand, and that is the point of
+// them:
+//
+//   16 = 8 foot soldiers (one step each) + 4 horse moves + 4
+//        elephant moves. The chariots, counsellor and king are all
+//        blocked in. Modern chess has 20, because there the pawn
+//        may step twice.
+//
+//   256 = 16 × 16, because no white first move touches anything of
+//        black's — not one of them reaches the sixth rank.
+//
+// The third is not hand-derivable. It is a fingerprint: if it ever
+// changes, something changed.
+// ============================================================
+
+<# ../मूल/अष्टापदम् => अ
+<# ../मूल/नियमाः => नि
+<# ./आकृतिः => आ
+
+निवेदनम्(नाम, वास्तवम्, अपेक्षितम्, दोषाः<~) {
+    ? वास्तवम् == अपेक्षितम् {
+        >> "  ok    " नाम ¶
+    } _ {
+        >> "  FAIL  " नाम "   expected " अपेक्षितम् ", got " वास्तवम् ¶
+        दोषाः = दोषाः + 1
+    }
+}
+
+// फलकस्य प्रतिकृतिः न क्रियते। चालः कृत्वा प्रत्यावर्त्यते, और
+// तत् एव गवेषणा अपि करोति — अतः एषा गणना तस्याः एव मार्गं
+// परीक्षते, न अन्यं सुरक्षिततरम्।
+//
+// EN: The board is not copied. Each move is played and taken back,
+// which is exactly what the search does — so this count exercises
+// the search's own path and not some safer one written for the test.
+परिगणना(स्थितिः<~, वर्णः, गभीरता) {
+    ? गभीरता == 0 { <~ 1 }
+    कुलम् = 0
+    @ चालः : नि::वैधचालाः(स्थितिः, वर्णः) {
+        अङ्गम् = स्थितिः[अ::आदिपदम्(चालः)]
+        गृहीतम् = 0
+        नि::कृति(स्थितिः, चालः, गृहीतम्)
+        कुलम् = कुलम् + परिगणना(स्थितिः, अ::रिपुः(वर्णः), गभीरता - 1)
+        नि::प्रत्यावर्तनम्(स्थितिः, चालः, अङ्गम्, गृहीतम्)
+    }
+    <~ कुलम्
+}
+
+दोषाः = 0
+>> "चतुरङ्गम् — move generation counts" ¶
+>> "" ¶
+
+// ------------------------------------------------------------
+>> "आदिमा स्थितिः — the opening position" ¶
+आदिस्थितिः = अ::नवम्()
+अ::सेनास्थापनम्(आदिस्थितिः)
+
+निवेदनम्("perft(1) = 16", परिगणना(आदिस्थितिः, 1, 1), 16, दोषाः)
+निवेदनम्("perft(2) = 256", परिगणना(आदिस्थितिः, 1, 2), 256, दोषाः)
+निवेदनम्("perft(3) = 4176", परिगणना(आदिस्थितिः, 1, 3), 4176, दोषाः)
+
+// आधुनिकः शतरञ्जः विंशतिं ददाति। भेदः चत्वारः, और ते एव
+// चत्वारः पत्तीनां द्विपदप्रयाणस्य अभावः।
+// EN: modern chess opens with 20. The difference is four, and those
+// four are the absent double pawn steps — of the eight files, only
+// the four unblocked ones would gain a move here.
+निवेदनम्("not 20 — no double steps in this game", परिगणना(आदिस्थितिः, 1, 1) == 20, #0, दोषाः)
+
+// ------------------------------------------------------------
+// मध्यक्रीडा — यत्र ग्रहणानि, संकटाः, बद्धानि च अङ्गानि सन्ति
+// EN: a midgame, where captures, checks and pins actually occur
+>> "" ¶
+>> "मध्यक्रीडा — a midgame position" ¶
+मध्यस्थितिः = आ::पठनम्([
+    "r...k..r",
+    "ppp..ppp",
+    "..n..n..",
+    "...pp...",
+    "...PP...",
+    "..N..N..",
+    "PPP..PPP",
+    "R...K..R"
+])
+// आकृतिः सममिता, अतः द्वयोः पक्षयोः चालसंख्या समाना भवितव्या।
+// एतत् एव अत्र हस्तेन ज्ञातुं शक्यम्; षड्विंशतिः इति अङ्कः तु
+// मापितः, न गणितः।
+//
+// प्रथमे रूपे अत्र "अष्टाविंशतिः" इति लिखितम् आसीत् — अनुमानम्,
+// न गणना। यन्त्रम् अवदत् षड्विंशतिः, और यन्त्रम् एव सम्यक् आसीत्।
+// अनुमानं परीक्षायां न स्थापनीयम् इव लिखितम्।
+//
+// EN: The diagram is symmetric, so both sides must have the same
+// number of moves. That much is derivable; 26 itself is measured,
+// not derived.
+//
+// The first version of this line said 28 — a guess written as if it
+// were a derivation. The engine said 26 and the engine was right.
+// A guess does not belong in a test dressed as a fact.
+श्वेतचालाः = परिगणना(मध्यस्थितिः, 1, 1)
+कृष्णचालाः = परिगणना(मध्यस्थितिः, 2, 1)
+निवेदनम्("a symmetric position gives both sides the same count", श्वेतचालाः, कृष्णचालाः, दोषाः)
+निवेदनम्("white to move has 26 moves", श्वेतचालाः, 26, दोषाः)
+निवेदनम्("perft(2) = 676 = 26 × 26", परिगणना(मध्यस्थितिः, 1, 2), 676, दोषाः)
+
+// ------------------------------------------------------------
+// गजस्य विशेषः: अष्टौ एव पदानि, और तानि एव सर्वदा
+// EN: the elephant's peculiarity — eight squares and only ever those
+>> "" ¶
+>> "गजक्षेत्रम् — the elephant reaches eight squares" ¶
+
+गजस्थितिः = अ::नवम्()
+अ::स्थापनम्(गजस्थितिः, 1, 1, अ::रचना(1, 3))
+गम्यानि = अ::नवम्()
+गम्यानि[अ::पदम्(1, 1)] = 1
+परिवर्तनम् = 1
+@ परिवर्तनम् > 0 {
+    परिवर्तनम् = 0
+    @ स्थानम्:1..64 {
+        ? गम्यानि[स्थानम्] == 1 {
+            पङ्क्तिः = अ::पङ्क्त्यङ्कः(स्थानम्)
+            स्तम्भः = अ::स्तम्भाङ्कः(स्थानम्)
+            @ दिप : [2, 0 - 2] {
+                @ दिस : [2, 0 - 2] {
+                    प = पङ्क्तिः + दिप
+                    स = स्तम्भः + दिस
+                    ? अ::अन्तर्गतम्(प, स) {
+                        लक्ष्यम् = अ::पदम्(प, स)
+                        ? गम्यानि[लक्ष्यम्] == 0 {
+                            गम्यानि[लक्ष्यम्] = 1
+                            परिवर्तनम् = परिवर्तनम् + 1
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+सङ्ख्या = 0
+@ स्थानम्:1..64 {
+    ? गम्यानि[स्थानम्] == 1 { सङ्ख्या = सङ्ख्या + 1 }
+}
+// a१ इत्यस्मात् गजः कदापि अष्टौ पदानि अतिक्रम्य न गच्छति — तानि
+// एव, यावत् क्रीडा चलति। अतः द्वौ गजौ भिन्नयोः क्षेत्रयोः कदापि
+// न मिलतः, और एकः गजः त्यक्तः क्रीडायाः अष्टमांशम् एव रक्षति।
+// EN: from a1 the elephant never reaches more than eight squares,
+// however long the game runs. Two elephants on different orbits
+// never meet, and one elephant guards an eighth of the board.
+निवेदनम्("an elephant from a1 reaches 8 squares", सङ्ख्या, 8, दोषाः)
+
+>> "" ¶
+? दोषाः == 0 {
+    >> "PASS — move generation counts hold" ¶
+} _ {
+    >> "FAIL — " दोषाः " problem(s)" ¶
+}

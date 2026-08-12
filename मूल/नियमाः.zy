@@ -1,0 +1,245 @@
+// ============================================================
+// मूल/नियमाः.zy — वैधता, संकटः, क्रीडायाः अन्तः
+//
+// चालाः.zy अङ्गानां गतिं जानाति; नियमाः.zy जानाति कः चालः
+// क्रीडकेन कर्तुं शक्यः। भेदः राज्ञि निहितः: प्रायोवैधः चालः यः
+// स्वराजानं संकटे स्थापयति, स न वैधः, किन्तु एतत् फलकस्य
+// वर्तमानायाः स्थितेः विषये न, अपि तु तस्याः अनन्तरं भवितव्यायाः।
+//
+// कृति() च प्रत्यावर्तनम्() इति द्वयं मिथः प्रतिलोमम्। फलकस्य
+// प्रतिकृतिः प्रतिपदं न क्रियते: गवेषणा सहस्रशः पदानि गच्छति,
+// चतुःषष्टेः आवण्टनं प्रतिपदम् इति महान् व्ययः। कृतं चालं
+// प्रत्यावर्तयितुं द्वे एव सूचने आवश्यके — गतम् अङ्गं गृहीतं च।
+//
+// गतिरोधे विजयः, न समता। एतत् शतरञ्जस्य प्राचीनः नियमः, यम्
+// आधुनिकः शतरञ्जः त्यक्तवान्। अत्र स एव गृहीतः, यतः मन्त्री
+// गजः च दुर्बलौ, अन्ते च फलकं शून्यप्रायम्; समता इति नियमेन
+// प्रायः सर्वा क्रीडा समतायाम् एव अन्तं गच्छेत्।
+//
+// EN: मूल/नियमाः.zy — legality, check, and how a game ends
+//
+// चालाः.zy knows how pieces move; नियमाः.zy knows which of those
+// moves a player may actually make. The difference is the king: a
+// pseudo-legal move that leaves one's own king in check is not
+// legal — and that is a fact about the position that *would*
+// follow, not about the one on the board.
+//
+// कृति() and प्रत्यावर्तनम्() are exact inverses. The board is not
+// copied per node: a search visits thousands of positions and a
+// 64-element allocation at each is the expensive path. Undoing a
+// move needs exactly two facts — which piece moved and what it
+// took.
+//
+// STALEMATE IS A WIN, not a draw. That is the old shatranj rule,
+// which modern chess dropped. It is kept here because the
+// counsellor and the elephant are weak and the endgame board is
+// nearly empty: under the modern rule almost every game between
+// even opponents would end drawn.
+// ============================================================
+
+# .मूल_नियमाः {
+
+    <# ./अष्टापदम् => अ
+    <# ./चालाः => च
+
+    #> {
+        प्रवृत्तम्
+        मातः
+        गतिरोधः
+        निर्वस्त्रः
+        समता
+        कृति
+        प्रत्यावर्तनम्
+        संकटे
+        वैधः
+        वैधचालाः
+        परिणामः
+        स्थितिसंकेतः
+        कारणसूत्रम्
+    }
+
+    // परिणामस्य संकेताः। सर्वे धनात्मकाः: मापकस्य नियतांशः
+    // शुद्धः अङ्कः एव भवितुम् अर्हति।
+    // EN: Outcome codes, all positive — a module constant must be a
+    // bare literal.
+    प्रवृत्तम्   := ०
+    मातः        := १
+    गतिरोधः     := २
+    निर्वस्त्रः := ३
+    समता        := ४
+
+    // चालं करोति। गृहीतम् इति गृहीतम् अङ्गम् (० चेत् न किमपि)।
+    // प्रवर्धनम् अत्र भवति, न उत्पादने: चालस्य अङ्के तस्य स्थानं
+    // नास्ति, अस्ति च नियमे — पत्तिः अन्तिमां पङ्क्तिं प्राप्य
+    // मन्त्री भवति, अन्यत् न किमपि।
+    //
+    // EN: Plays a move. गृहीतम् receives the captured piece, or 0.
+    // Promotion happens here rather than in the generator: the move
+    // encoding has no room for it and the rule leaves no choice —
+    // a foot soldier reaching the far rank becomes a counsellor and
+    // nothing else.
+    कृति(स्थितिः<~, चालः, गृहीतम्<~) {
+        आदिः = अ::आदिपदम्(चालः)
+        अन्तः = अ::अन्तपदम्(चालः)
+        अङ्गम् = स्थितिः[आदिः]
+        गृहीतम् = स्थितिः[अन्तः]
+
+        ? अ::अङ्गप्रकारः(अङ्गम्) == १ {
+            वर्णः = अ::अङ्गवर्णः(अङ्गम्)
+            पङ्क्तिः = अ::पङ्क्त्यङ्कः(अन्तः)
+            ? वर्णः == १ {
+                ? पङ्क्तिः == ८ { अङ्गम् = अ::रचना(१, ५) }
+            } _ {
+                ? पङ्क्तिः == १ { अङ्गम् = अ::रचना(२, ५) }
+            }
+        }
+
+        स्थितिः[आदिः] = ०
+        स्थितिः[अन्तः] = अङ्गम्
+        <~ ०
+    }
+
+    // कृतेः प्रतिलोमम्। गतम् अङ्गं प्रवर्धनात् पूर्वम् एव देयम्;
+    // तत् आह्वातुः दायित्वम्, यतः स एव तत् कृतेः पूर्वं दृष्टवान्।
+    //
+    // EN: The inverse of कृति. The piece is the one that *left* the
+    // origin square, before any promotion — the caller's business,
+    // since the caller is who saw it there.
+    प्रत्यावर्तनम्(स्थितिः<~, चालः, अङ्गम्, गृहीतम्) {
+        स्थितिः[अ::आदिपदम्(चालः)] = अङ्गम्
+        स्थितिः[अ::अन्तपदम्(चालः)] = गृहीतम्
+    }
+
+    संकटे(स्थितिः, वर्णः) {
+        राजस्थानम् = अ::राजपदम्(स्थितिः, वर्णः)
+        ? राजस्थानम् == ० { <~ #० }
+        <~ च::आक्रान्तम्(स्थितिः, राजस्थानम्, अ::रिपुः(वर्णः))
+    }
+
+    // चालं कृत्वा स्वराजा संकटे न चेत्, स वैधः।
+    // EN: A move is legal when, having been played, it does not
+    // leave the mover's own king attacked.
+    वैधः(स्थितिः<~, चालः, वर्णः) {
+        अङ्गम् = स्थितिः[अ::आदिपदम्(चालः)]
+        गृहीतम् = ०
+        कृति(स्थितिः, चालः, गृहीतम्)
+        फलम् = संकटे(स्थितिः, वर्णः)
+        प्रत्यावर्तनम्(स्थितिः, चालः, अङ्गम्, गृहीतम्)
+        <~ फलम् == #०
+    }
+
+    // वर्णस्य सर्वे वैधाः चालाः।
+    //
+    // स्थितिः आदानप्रदानम् (<~) इति रूपेण गृह्यते यद्यपि अन्ते
+    // अपरिवर्तिता तिष्ठति। कारणम्: वैधः() तस्याम् एव चालं कृत्वा
+    // प्रत्यावर्तयति, प्रतिकृतिं च न करोति। एतत् एव अस्य स्तरस्य
+    // शीघ्रता।
+    //
+    // EN: Every legal move for a colour.
+    //
+    // The position is taken as an output parameter even though it
+    // comes back unchanged: वैधः() plays each move on it and takes
+    // it back rather than working on a copy, and that is where the
+    // speed of this layer comes from.
+    वैधचालाः(स्थितिः<~, वर्णः) {
+        राजस्थानम् = अ::राजपदम्(स्थितिः, वर्णः)
+        रिपुवर्णः = अ::रिपुः(वर्णः)
+        फलम् = []
+        @ चालः : च::सर्वचालाः(स्थितिः, वर्णः) {
+            आदिः = अ::आदिपदम्(चालः)
+            अङ्गम् = स्थितिः[आदिः]
+            गृहीतम् = ०
+            कृति(स्थितिः, चालः, गृहीतम्)
+
+            // राजा एव चलितः चेत् तस्य नवं पदं निरीक्ष्यम्।
+            // EN: When the king itself moved, the square to test is
+            // the one it moved to.
+            निरीक्ष्यम् = राजस्थानम्
+            ? आदिः == राजस्थानम् { निरीक्ष्यम् = अ::अन्तपदम्(चालः) }
+
+            सुरक्षितम् = #१
+            ? निरीक्ष्यम् > ० {
+                ? च::आक्रान्तम्(स्थितिः, निरीक्ष्यम्, रिपुवर्णः) { सुरक्षितम् = #० }
+            }
+            प्रत्यावर्तनम्(स्थितिः, चालः, अङ्गम्, गृहीतम्)
+            ? सुरक्षितम् { फलम् = फलम् $+ चालः }
+        }
+        <~ फलम्
+    }
+
+    // वर्णस्य समीपे किम् अवशिष्टम्।
+    //
+    //   प्रवृत्तम्   क्रीडा चलति
+    //   मातः        वर्णः मातः — प्रतिपक्षस्य जयः
+    //   गतिरोधः     वर्णस्य कश्चन चालः नास्ति, संकटं च नास्ति —
+    //               प्राचीनेन नियमेन प्रतिपक्षस्य जयः
+    //   निर्वस्त्रः  वर्णस्य राजा एकाकी — प्रतिपक्षस्य जयः
+    //   समता        उभौ राजानौ एकाकिनौ
+    //
+    // EN: What is left for a colour to do.
+    //
+    //   प्रवृत्तम्   the game goes on
+    //   मातः        checkmated — the opponent has won
+    //   गतिरोधः     no legal move and not in check — under the old
+    //               rule the opponent has won for that too
+    //   निर्वस्त्रः  the king stands alone — the opponent has won
+    //   समता        both kings stand alone
+    // क्रमः महत्त्वं धारयति। मातः निर्वस्त्रत्वात् पूर्वं पृच्छ्यते:
+    // यः राजा एकाकी च मातः च, तस्य पराजयः मातेन, न दारिद्र्येण।
+    // विपरीते क्रमे सर्वः अन्तिमः मातः "निर्वस्त्रः" इति कथ्येत,
+    // यत् सत्यम् अपि भ्रामकम्।
+    //
+    // EN: The order matters. Mate is asked before bareness: a king
+    // that is both alone and mated lost to the mate, not to the
+    // poverty. In the other order every endgame mate would be
+    // reported as a bare king — true, and misleading.
+    परिणामः(स्थितिः<~, वर्णः) {
+        चालाः = वैधचालाः(स्थितिः, वर्णः)
+        ? (चालाः$#) == ० {
+            ? संकटे(स्थितिः, वर्णः) { <~ १ }
+            <~ २
+        }
+
+        स्वगणना = अ::अङ्गगणना(स्थितिः, वर्णः, ०)
+        ? स्वगणना == १ {
+            रिपुगणना = अ::अङ्गगणना(स्थितिः, अ::रिपुः(वर्णः), ०)
+            ? रिपुगणना == १ { <~ ४ }
+            <~ ३
+        }
+        <~ ०
+    }
+
+    // स्थितेः संकेतः, पुनरावृत्तेः परीक्षायै। बहुपदी संवलनम् —
+    // सङ्घर्षः सम्भवति किन्तु तस्य मूल्यं समता एका, न मिथ्या जयः।
+    // हस्तः अपि गण्यते: एका एव आकृतिः श्वेतस्य कृष्णस्य च हस्ते
+    // भिन्ना स्थितिः।
+    //
+    // EN: A position hash, for the repetition test. A polynomial
+    // fold: a collision costs one wrongly-drawn game, never a wrong
+    // winner. The side to move is folded in too — the same diagram
+    // with white to play and with black to play are two positions,
+    // not one.
+    स्थितिसंकेतः(स्थितिः, वर्णः) {
+        संकेतः = वर्णः
+        @ स्थानम्:१..६४ {
+            संकेतः = संकेतः * ३१ + स्थितिः[स्थानम्]
+            संकेतः = संकेतः - (संकेतः / १०००००००) * १०००००००
+        }
+        <~ संकेतः
+    }
+
+    // परिणामस्य संकेतं भाषायाः सूत्रं प्रति नयति, यथा कोऽपि
+    // आह्वाता वाक्यं स्वयं न लिखेत्।
+    //
+    // EN: Maps an outcome code to an i18n key, so no caller ever
+    // writes the sentence itself.
+    कारणसूत्रम्(संकेतः) {
+        <~ ?? संकेतः {
+            १ => "अन्तः.मातः"
+            २ => "अन्तः.गतिरोधः"
+            ३ => "अन्तः.निर्वस्त्रः"
+            ४ => "अन्तः.समता"
+            _  => ""
+        }
+    }
+}

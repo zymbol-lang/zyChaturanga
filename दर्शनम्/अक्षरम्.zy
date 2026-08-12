@@ -1,0 +1,65 @@
+// ============================================================
+// दर्शनम्/अक्षरम्.zy — बहुभाषिकस्य पटलस्य अक्षरमानम्
+//
+// अस्याः क्रीडायाः विन्यासः स्तम्भेषु निश्चितः। फलकस्य कोष्ठाः,
+// पार्श्वखण्डः, प्रत्येकं परिवृतं पटलम् — सर्वं समं भवितव्यम्,
+// भाषा संस्कृतं वा हिन्दी वा फ़ारसी वा आङ्ग्लं वा स्पानिश् वा।
+//
+// अक्षरसंख्या स्तम्भसंख्या न। "रा" इत्यत्र द्वे अक्षरे एकम् एव
+// वर्णचिह्नम्, "कृ" इत्यत्र द्वे अक्षरे एकः एव स्तम्भः, चित्राणि
+// च एकैकं द्वौ स्तम्भौ गृह्णन्ति। अतः अस्मिन् प्रोग्रामे सर्वा
+// विस्तारगणना $# इति न, अपि तु अत्रत्येन विस्तारः() इति गच्छति।
+//
+// एतत् मानकम्/पटलम् इत्यस्य उपरि सूक्ष्मम् आवरणम्। क्रीडा संस्कृतेन
+// वदति, मानकसंग्रहः च आङ्ग्लेन।
+//
+// EN: दर्शनम्/अक्षरम्.zy — text metrics for a multilingual TUI
+//
+// The layout is column-exact: the board cells, the side panel and
+// every framed screen must line up whether the interface is in
+// Sanskrit, Hindi, Persian, English or Spanish.
+//
+// Grapheme count is NOT column count. "रा" is two graphemes and one
+// glyph, "कृ" is two graphemes and one column, and an emoji is one
+// grapheme and two columns. So every width calculation in this
+// program goes through विस्तारः() here, never through $#.
+//
+// A thin wrapper over मानकम्/पटलम्: the game speaks Sanskrit and the
+// standard library speaks English.
+// ============================================================
+
+# .दर्शनम्_अक्षरम् {
+
+    <# ../मानकम्/पटलम् => पट
+
+    #> { विस्तारः, वामपूरणम्, दक्षिणपूरणम्, मध्यस्थम्, छेदनम्, कोष्ठपूरणम् }
+
+    विस्तारः(पाठः) { <~ पट::विस्तारः(पाठः) }
+    वामपूरणम्(पाठः, स्तम्भाः) { <~ पट::वामपूरणम्(पाठः, स्तम्भाः) }
+    दक्षिणपूरणम्(पाठः, स्तम्भाः) { <~ पट::दक्षिणपूरणम्(पाठः, स्तम्भाः) }
+    मध्यस्थम्(पाठः, स्तम्भाः) { <~ पट::मध्यस्थम्(पाठः, स्तम्भाः) }
+    छेदनम्(पाठः, स्तम्भाः) { <~ पट::छेदनम्(पाठः, स्तम्भाः) }
+
+    // द्विस्तम्भस्य कोष्ठस्य पूरणम्। यत् किमपि चिह्नं दीयते, तत्
+    // ठीकं द्वौ स्तम्भौ पूरयति — एकस्तम्भं चेत् पूरकेन सह, द्विस्तम्भं
+    // चेत् यथावत्।
+    //
+    // एतत् एव सर्वेषां रूपाणां मूलम्। GO इति क्रीडा प्रतिरूपं
+    // पृथक् गणयति स्म; अत्र तु मापनम् एव उत्तरं ददाति, अतः यत्
+    // रूपम् अद्य न लिखितं तदपि स्वयम् एव शुद्धं भवति।
+    //
+    // EN: Pad a glyph to exactly two columns — the whole of the
+    // two-column invariant, in one function.
+    //
+    // The go engine settled this per theme, with a rule for stones
+    // and another for ASCII. Here the measurement answers it, so a
+    // theme nobody has written yet comes out right anyway: hand it
+    // a one-column letter and it gets the filler, hand it a
+    // two-column picture and it is already done.
+    कोष्ठपूरणम्(चिह्नम्, पूरकम्) {
+        व = विस्तारः(चिह्नम्)
+        ? व >= 2 { <~ चिह्नम् }
+        ? व == 1 { <~ "{चिह्नम्}{पूरकम्}" }
+        <~ "{पूरकम्}{पूरकम्}"
+    }
+}

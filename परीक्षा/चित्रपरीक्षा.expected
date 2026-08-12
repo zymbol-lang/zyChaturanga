@@ -1,0 +1,41 @@
+चतुरङ्गम् — layout arithmetic
+पङ्क्तिविस्तारः — every row is 16 columns
+  ok    [शतरञ्जम्] opening position
+  ok    [चित्रम्] opening position
+  ok    [अक्षरम्] opening position
+  ok    [लातिनम्] opening position
+अन्तस्तम्भाः — pieces in the first and last files
+  ok    [शतरञ्जम्] every piece on both edges
+  ok    [चित्रम्] every piece on both edges
+  ok    [अक्षरम्] every piece on both edges
+  ok    [लातिनम्] every piece on both edges
+रिक्तम् — an empty board measures the same
+  ok    [शतरञ्जम्] empty board
+  ok    [चित्रम्] empty board
+  ok    [अक्षरम्] empty board
+  ok    [लातिनम्] empty board
+अक्षरमानम् — the widths the invariant rests on
+  ok    र is 1 column
+  ok    रा is 2 columns
+  ok    रा is 2 graphemes
+  ok    🐘 is 2 columns
+  ok    🐘 is 1 grapheme
+  ok    ♔ is 1 column
+  ok    कोष्ठपूरणम् pads 1 to 2
+  ok    कोष्ठपूरणम् leaves 2 alone
+  ok    कोष्ठपूरणम् fills an empty cell
+विन्यासः — layout selection
+  ok    80×24 is side by side
+  ok    40×24 is stacked
+  ok    20×24 is impossible
+  ok    80×10 is impossible
+  ok    49×13 is exactly side by side
+  ok    48×13 falls back
+  ok    48×15 falls back to stacked
+पदावली — square names follow the numeral script
+  ok    Sanskrit e4
+  ok    Persian e4
+  ok    English e4
+  ok    a1 is the first square
+  ok    h8 is the last square
+PASS — the grid holds together
