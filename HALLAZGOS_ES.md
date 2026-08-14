@@ -11,11 +11,14 @@ salida** — que es lo que exige una búsqueda alfa-beta.
 
 | ID | Tipo | Descripción | Estado |
 |----|------|-------------|--------|
-| HLZ-CHA-001 | Bug | `@ <identificador Bool>` es un bucle *mientras* en el tree-walker y un bucle *veces* en la VM, que aborta | Abierto |
-| HLZ-CHA-002 | Carencia | `@ i:2..n` con `n < 2` cuenta hacia atrás en vez de no iterar; no hay forma de rango vacío | Abierto |
-| HLZ-CHA-003 | Doc | GUIDE.md dice que el modo numeral persiste «en el mismo fichero»; en realidad es global al proceso | Abierto |
-| HLZ-CHA-004 | Medición | La VM resulta ser ~38× más rápida que el tree-walker en esta carga, no ~4× | Informado |
-| IDEA-CHA-001 | Idea | El modo numeral condicionado por locale funciona y no está documentado como técnica de i18n | Propuesta |
+| HLZ-CHA-001 | Bug | `@ <expr>` elegía la forma del bucle por la sintaxis en la VM y por el valor en los otros tres; y la truthiness del especificador difería en los cuatro | **Corregido** (v0.0.9), en dos vueltas |
+| HLZ-CHA-002 | Carencia | `@ i:2..n` con `n < 2` cuenta hacia atrás en vez de no iterar; no hay forma de rango vacío | **Avisado** — semántica intacta, aviso del analizador |
+| HLZ-CHA-003 | Doc | GUIDE.md decía que el modo numeral persiste «en el mismo fichero»; es global al proceso | **Corregido** |
+| HLZ-CHA-004 | Medición | La VM es 42–46× el tree-walker en esta carga, no ~4× | **Corregido** en los documentos |
+| IDEA-CHA-001 | Idea | El modo numeral condicionado por locale no estaba documentado como técnica de i18n | **Documentado** — `USERAPPI18N.md` §14 |
+
+Todos resueltos el 2026-08-13. Lo que se decidió en cada uno está al pie de su
+sección, bajo **Resolución**.
 
 ---
 
@@ -43,7 +46,7 @@ El tercero sí era real, y resultó ser más grande de lo que decía.
 
 ---
 
-## HLZ-CHA-001 — `@ <identificador>` diverge entre motores según el tipo
+## HLZ-CHA-001 — `@ <expr>` diverge entre motores según el tipo
 
 **Reproducción**
 
@@ -91,6 +94,91 @@ tiene un hueco). Lo que no puede quedarse es que dependa del motor.
 deslizamientos del रथ usan `@ <llamada a función>`, que sí coincide en ambos
 motores (comprobado).
 
+### Resolución — corregido, y era más ancho de lo aquí escrito
+
+Al abordarlo se midieron seis formas contra los **cuatro** motores, no dos. El
+hallazgo describía una divergencia; había tres, y una cuarta que no era la VM:
+
+| `@ …` | TW | VM | zyml | JS |
+|-------|----|----|------|-----|
+| `v` con v Bool | mientras | **times → aborta** | mientras | mientras |
+| `k` con k Int 3 | veces | veces | veces | veces |
+| `tres()` → Int | veces | **mientras → infinito** | veces | veces |
+| `a$#` → Int | veces | **mientras → infinito** | veces | veces |
+| `k` con k Int **-1** | **infinito** | 0 iter. | 0 iter. | 0 iter. |
+| `n <= 3` | mientras | mientras | mientras | mientras |
+
+La causa está en una línea de cada motor: la VM elegía por la **forma
+sintáctica** del AST (`Literal(Int)` → veces, `Identifier` → veces, resto →
+mientras) y los otros tres por el **valor en ejecución**. El tree-walker, además,
+exigía `n > 0` para tratar un Int como cuenta, así que un `−1` se le escapaba al
+camino *mientras* y giraba para siempre — ahí la minoría era él.
+
+**Regla fijada** (validada con el usuario, 2026-08-13): *un `Int` es una cuenta,
+cualquier otro valor es una condición.* Una cuenta de cero o menos ejecuta el
+cuerpo cero veces y nunca cae al camino *mientras*.
+
+- La VM aprendió a preguntarlo en ejecución: instrucción `IsInt` nueva y
+  `compile_adaptive_loop` en lugar de `compile_dynamic_times_loop`. Emite el
+  cuerpo **una sola vez** para los dos caminos, así que `@!` y `@>` conservan un
+  único destino de salto. El caso común `@ n <= 3` no paga nada: `expr_is_always_bool`
+  lo manda al *mientras* directo, y un literal entero sigue yendo al *veces* estático.
+- El tree-walker dejó de exigir `n > 0`: `for _ in 0..n.max(0)`.
+- `zyquality/corpus/loops/13_specifier_forms.zy` cubre las seis formas más el
+  cero y el negativo. Antes no había ninguna: `04_times.zy` solo escribía
+  `@ <ident Int>`, la única fila donde los cuatro ya coincidían.
+
+Los cuatro motores coinciden ahora byte a byte en las ocho formas. El corpus de
+consenso pasó de 104 divergencias a 103, y la que desapareció es este fichero;
+ninguna nueva.
+
+### Segunda vuelta — la regla no cubría los tipos que nadie había probado
+
+La primera corrección dejó fijado *qué es una cuenta*, pero el camino
+«condición» seguía leyendo el valor por **truthiness**, y eso no estaba unificado.
+Con un tipo que no fuera `Int` ni `Bool` los cuatro motores volvían a discrepar:
+
+| `@ x` | TW | VM | zyml | JS |
+|-------|----|----|------|-----|
+| `x = 3.5` | 0 vueltas | infinito | error | infinito |
+| `x = ""` | 0 vueltas | infinito | error | 0 vueltas |
+| `x = [1,2,3]` | 0 vueltas | infinito | error | infinito |
+
+Peor: la primera corrección **empeoró tres de esos casos en la VM**. Antes
+`@ "hola"` y `@ []` abortaban con `cannot compare values with operator 'Ge'`;
+después se tragaban el valor y giraban. Un error que para es mejor que dos
+motores que responden distinto sin avisar.
+
+**Regla completada:** *el especificador es una cuenta (`Int`) o una condición
+(`Bool`); cualquier otra cosa se rechaza en ejecución.* La truthiness no se
+aplica aquí — tenía que inventar una respuesta y cada motor inventaba la suya.
+
+zyml ya lo hacía y fue la referencia; los otros tres se alinearon con su mensaje
+y sus nombres de tipo, idénticos byte a byte en los cuatro:
+
+```text
+Runtime error: loop expects a count or a condition, got array
+```
+
+- TW: la rama `_ =>` pasa a ser `Value::Bool(_)`, y un `other` devuelve error.
+  Se valida en **cada** re-evaluación, no solo en la primera.
+- VM: instrucción `AsLoopCond` — `Bool` pasa, lo demás levanta. Emitida en el
+  camino condición, que es por donde entra todo especificador no-`Int`.
+- JS: helper `loopCond` en `web/src/zymbol/zymbol.js`.
+- `Value::type_word()` nuevo en TW y VM (nombres legibles: `integer`, `float`,
+  `array`…), que es lo que zyml ya tenía como `type_name`.
+- `zyquality/reject/loops/` — tres formas que todo motor debe refusar.
+
+**Y un hueco del arnés que esto destapó.** `zyq reject` seguía diciendo que el
+motor del navegador aceptaba las tres formas. No las aceptaba: `runZymbol`
+captura sus propios errores para que el playground pueda pintarlos en su panel,
+y `tests/run_one.mjs` nunca leía el resultado — así que un programa rechazado
+salía con código 0 y el arnés lo puntuaba como aceptado. `runZymbol` devuelve
+ahora `{failed, message}` y el runner lo lee. Con eso, `reject` pasó de *0 de 4
+rechazadas en todos los motores* a **4 de 7**: las tres nuevas más una de
+`assignment/` que llevaba tiempo mal contada. Una suite de rechazos que no puede
+ver un rechazo estaba midiendo el runner, no el motor.
+
 ---
 
 ## HLZ-CHA-002 — un rango ascendente se invierte solo cuando la lista tiene un elemento
@@ -122,6 +210,34 @@ se declara con paso explícito, y que el recorrido descendente se pida con
 `a..b:paso` — que es la forma que la guía ya documenta para ese caso. Alternativa
 menos invasiva: un aviso del analizador cuando los dos extremos de un rango no
 son literales.
+
+### Resolución — la segunda propuesta, la semántica no se toca
+
+Decidido con el usuario (2026-08-13): **la alternativa menos invasiva**. Hacer
+vacío el rango descendente habría silenciado bucles que hoy sí iteran, y un
+fallo que deja de avisar es peor que uno que revienta. `10..1` sigue contando
+hacia atrás.
+
+Lo que cambia es que ahora se ve venir. `zymbol check` avisa cuando los dos
+extremos de un rango no son literales enteros — que es exactamente cuando la
+dirección no se puede leer en el código:
+
+```text
+warning: range direction is decided at runtime: if the end turns out to be
+lower than the start, this loop counts down instead of not running.
+Guard the empty case.
+```
+
+**El aviso reconoce la guarda.** La primera versión gritaba también sobre el
+código ya corregido de [`मूल/मतिः.zy`](मूल/मतिः.zy) — el que lleva su
+`? संख्या >= २` encima — y un aviso que señala código correcto enseña a
+ignorar avisos. El analizador lleva ahora una pila de extremos que un `?`
+dominante ya comparó (`TypeChecker::guarded_bounds`), y calla dentro de ese
+bloque. En este proyecto pasó de 10 avisos a 9: los que quedan son bucles
+`@ क:१..संख्या` sin guarda, que es justo lo que se quería ver.
+
+La trampa está documentada en `GUIDE.md`, junto a *Reverse Range with Step*, con
+la guarda como forma correcta.
 
 ---
 
@@ -156,6 +272,13 @@ La frase de la guía probablemente describe la persistencia *léxica* (dentro de
 fichero, el modo sigue vigente hasta el siguiente cambio), que es verdad pero se
 lee como si fuera el alcance.
 
+### Resolución — corregida la guía
+
+`GUIDE.md` §*Mode-Switch Token* dice ahora lo que ocurre: «The mode is global to
+the process, not to the file», con el ejemplo de módulo que lo demuestra y un
+puntero a `USERAPPI18N.md` §14. Verificado en tree-walker, VM y zyml antes de
+escribirlo; los tres imprimen `४२` desde el otro fichero.
+
 ---
 
 ## HLZ-CHA-004 — la VM es ~38× más rápida aquí, no ~4×
@@ -178,6 +301,35 @@ No es un bug — es que el número publicado se quedó pequeño y sigue citándo
 **Consecuencia de diseño.** El nivel `उच्चः` (profundidad 3) cuesta ~2 s por
 jugada en el tree-walker y ~0,05 s en la VM. El juego se juega en los dos, y la
 recomendación de `--vm` para el nivel alto está medida, no supuesta.
+
+### Resolución — re-medido todo y corregidos los documentos
+
+Se volvieron a medir los microbenchmarks de `zyquality/bench/` en vez de citar
+los de la tabla vieja (mejor de 3, descontando el arranque del proceso: ~5 ms
+tree-walker, ~3 ms VM), y las dos cargas de este proyecto:
+
+| Carga | tree-walker | VM | factor |
+|-------|-------------|-----|--------|
+| `bench_strings` | 76 ms | 51 ms | 1,4× |
+| `bench_collections` | 71 ms | 37 ms | 1,9× |
+| `stress` | 236 ms | 78 ms | 3,0× |
+| `bench_match` | 171 ms | 54 ms | 3,1× |
+| `bench_recursion` (fib) | 1566 ms | 253 ms | 6,1× |
+| `परीक्षा/गतिपरीक्षा.zy` | 6,11 s | 0,146 s | **42×** |
+| `परीक्षा/मतिपरीक्षा.zy` | 43,5 s | 0,949 s | **46×** |
+
+El «~38×» de la primera medición era correcto en orden de magnitud; con el
+binario de v0.0.9 sale 42× y 46×.
+
+De paso apareció que la tabla de `ARCHITECTURE.md` estaba caduca en más de un
+sitio: daba *Collections* como ~14 s en el tree-walker —una limitación de clonado
+de `HashMap` por ámbito que ya se había arreglado— cuando son 71 ms. La entrada
+había sobrevivido al defecto que describía.
+
+Corregidos `ARCHITECTURE.md`, `interpreter/README.md`, `README.md` de la raíz,
+`CLAUDE.md` y `.github/copilot-instructions.md`, todos con la misma idea: **no
+hay un factor único, se cita la carga**. Los `_staging/` y los manuales
+archivados de v0.0.4 se dejaron como están: son instantáneas históricas.
 
 ---
 
@@ -221,6 +373,18 @@ comportamiento intencionado y ninguna obvia al usarla así:
 **Propuesta.** Documentar el patrón en `USERAPPI18N.md` como tercer mecanismo,
 junto con las dos advertencias — que es donde alguien que construya una
 aplicación multilingüe lo va a buscar.
+
+### Resolución — documentado
+
+`USERAPPI18N.md` §14 *Third mechanism: the digit script*, con el despachador de
+ejemplo (verificado en ambos motores), las dos advertencias y la regla que sale
+de ellas: **el modo pertenece a la salida que lee una persona; se vuelve a
+`#09#` antes de cualquier cosa que lea una máquina.** La tabla de ejes de §1
+apunta a la sección, y `GUIDE.md` la enlaza desde el token.
+
+Lo que separa a este mecanismo de los otros dos, y es lo que se quería dejar
+dicho: los otros necesitan una entrada por cadena, este necesita una por
+*idioma*.
 
 ---
 
