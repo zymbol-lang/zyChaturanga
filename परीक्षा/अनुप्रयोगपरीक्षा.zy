@@ -51,36 +51,36 @@
 // the re-export rule, and breaking it is caught at analysis time
 // rather than at runtime.
 >> "नियतांशाः — constants" ¶
-निवेदनम्("EMPTY", en.EMPTY, अ.रिक्तम्, दोषाः)
-निवेदनम्("WHITE", en.WHITE, अ.श्वेतः, दोषाः)
-निवेदनम्("BLACK", en.BLACK, अ.कृष्णः, दोषाः)
-निवेदनम्("ELEPHANT", en.ELEPHANT, अ.गजः, दोषाः)
-निवेदनम्("CHARIOT", en.CHARIOT, अ.रथः, दोषाः)
-निवेदनम्("COUNSELLOR", en.COUNSELLOR, अ.मन्त्री, दोषाः)
-निवेदनम्("VACIO", es.VACIO, अ.रिक्तम्, दोषाः)
-निवेदनम्("BLANCAS", es.BLANCAS, अ.श्वेतः, दोषाः)
-निवेदनम्("NEGRAS", es.NEGRAS, अ.कृष्णः, दोषाः)
-निवेदनम्("ELEFANTE", es.ELEFANTE, अ.गजः, दोषाः)
-निवेदनम्("CHECKMATE", en.CHECKMATE, नि.मातः, दोषाः)
-निवेदनम्("AHOGADO", es.AHOGADO, नि.गतिरोधः, दोषाः)
-निवेदनम्("BARE_KING", en.BARE_KING, नि.निर्वस्त्रः, दोषाः)
-निवेदनम्("VALOR_CARRO", es.VALOR_CARRO, आक.मूल्य_रथः, दोषाः)
-निवेदनम्("ADVANCED", en.ADVANCED, 3, दोषाः)
+निवेदनम्("EMPTY", en.EMPTY, अ.रिक्तम्, दोषाः<~)
+निवेदनम्("WHITE", en.WHITE, अ.श्वेतः, दोषाः<~)
+निवेदनम्("BLACK", en.BLACK, अ.कृष्णः, दोषाः<~)
+निवेदनम्("ELEPHANT", en.ELEPHANT, अ.गजः, दोषाः<~)
+निवेदनम्("CHARIOT", en.CHARIOT, अ.रथः, दोषाः<~)
+निवेदनम्("COUNSELLOR", en.COUNSELLOR, अ.मन्त्री, दोषाः<~)
+निवेदनम्("VACIO", es.VACIO, अ.रिक्तम्, दोषाः<~)
+निवेदनम्("BLANCAS", es.BLANCAS, अ.श्वेतः, दोषाः<~)
+निवेदनम्("NEGRAS", es.NEGRAS, अ.कृष्णः, दोषाः<~)
+निवेदनम्("ELEFANTE", es.ELEFANTE, अ.गजः, दोषाः<~)
+निवेदनम्("CHECKMATE", en.CHECKMATE, नि.मातः, दोषाः<~)
+निवेदनम्("AHOGADO", es.AHOGADO, नि.गतिरोधः, दोषाः<~)
+निवेदनम्("BARE_KING", en.BARE_KING, नि.निर्वस्त्रः, दोषाः<~)
+निवेदनम्("VALOR_CARRO", es.VALOR_CARRO, आक.मूल्य_रथः, दोषाः<~)
+निवेदनम्("ADVANCED", en.ADVANCED, 3, दोषाः<~)
 
 // ------------------------------------------------------------
 >> "" ¶
 >> "कार्याणि — functions" ¶
-निवेदनम्("square", en::square(4, 5), अ::पदम्(4, 5), दोषाः)
-निवेदनम्("casilla", es::casilla(4, 5), अ::पदम्(4, 5), दोषाः)
-निवेदनम्("rank_of", en::rank_of(29), अ::पङ्क्त्यङ्कः(29), दोषाः)
-निवेदनम्("columna_de", es::columna_de(29), अ::स्तम्भाङ्कः(29), दोषाः)
-निवेदनम्("opponent", en::opponent(1), अ::रिपुः(1), दोषाः)
-निवेदनम्("rival", es::rival(1), अ::रिपुः(1), दोषाः)
-निवेदनम्("make_piece", en::make_piece(2, 3), अ::रचना(2, 3), दोषाः)
-निवेदनम्("kind_of", en::kind_of(9), अ::अङ्गप्रकारः(9), दोषाः)
-निवेदनम्("color_de", es::color_de(9), अ::अङ्गवर्णः(9), दोषाः)
-निवेदनम्("piece_value", en::piece_value(4), आक::अङ्गमूल्यम्(4), दोषाः)
-निवेदनम्("valor_pieza", es::valor_pieza(4), आक::अङ्गमूल्यम्(4), दोषाः)
+निवेदनम्("square", en::square(4, 5), अ::पदम्(4, 5), दोषाः<~)
+निवेदनम्("casilla", es::casilla(4, 5), अ::पदम्(4, 5), दोषाः<~)
+निवेदनम्("rank_of", en::rank_of(29), अ::पङ्क्त्यङ्कः(29), दोषाः<~)
+निवेदनम्("columna_de", es::columna_de(29), अ::स्तम्भाङ्कः(29), दोषाः<~)
+निवेदनम्("opponent", en::opponent(1), अ::रिपुः(1), दोषाः<~)
+निवेदनम्("rival", es::rival(1), अ::रिपुः(1), दोषाः<~)
+निवेदनम्("make_piece", en::make_piece(2, 3), अ::रचना(2, 3), दोषाः<~)
+निवेदनम्("kind_of", en::kind_of(9), अ::अङ्गप्रकारः(9), दोषाः<~)
+निवेदनम्("color_de", es::color_de(9), अ::अङ्गवर्णः(9), दोषाः<~)
+निवेदनम्("piece_value", en::piece_value(4), आक::अङ्गमूल्यम्(4), दोषाः<~)
+निवेदनम्("valor_pieza", es::valor_pieza(4), आक::अङ्गमूल्यम्(4), दोषाः<~)
 
 // ------------------------------------------------------------
 // एका एव क्रीडा, त्रिभिः नामभिः। त्रीणि फलकानि पृथक्, और अन्ते
@@ -91,7 +91,7 @@
 >> "समता — the same moves under three names" ¶
 
 संस्कृतफलकम् = अ::नवम्()
-अ::सेनास्थापनम्(संस्कृतफलकम्)
+अ::सेनास्थापनम्(संस्कृतफलकम्<~)
 आङ्ग्लफलकम् = en::new_board()
 en::setup(आङ्ग्लफलकम्)
 स्पानिशफलकम् = es::tablero_nuevo()
@@ -102,7 +102,7 @@ es::posicion_inicial(स्पानिशफलकम्)
     ? संस्कृतफलकम्[क] <> आङ्ग्लफलकम्[क] { भेदाः = भेदाः + 1 }
     ? संस्कृतफलकम्[क] <> स्पानिशफलकम्[क] { भेदाः = भेदाः + 1 }
 }
-निवेदनम्("the three openings are identical", भेदाः, 0, दोषाः)
+निवेदनम्("the three openings are identical", भेदाः, 0, दोषाः<~)
 
 // ग्रहणसहितः चालः, त्रिषु नामसु। निर्गमप्राचलः एव अत्र
 // परीक्ष्यते: गृहीतम् अङ्गं तेन एव प्रत्यागच्छति।
@@ -123,7 +123,7 @@ es::posicion_inicial(स्पानिशफलकम्)
 
 संस्कृतम् = अ::प्रतिकृतिः(ग्रहणस्थितिः)
 संगृहीतम् = 0
-नि::कृति(संस्कृतम्, ग्रहणचालः, संगृहीतम्)
+नि::कृति(संस्कृतम्<~, ग्रहणचालः, संगृहीतम्<~)
 
 आङ्ग्लम् = en::copy_board(ग्रहणस्थितिः)
 आगृहीतम् = 0
@@ -133,16 +133,16 @@ en::play(आङ्ग्लम्, ग्रहणचालः, आगृही�
 सगृहीतम् = 0
 es::jugar(स्पानिशम्, ग्रहणचालः, सगृहीतम्)
 
-निवेदनम्("play captured the same piece", आगृहीतम्, संगृहीतम्, दोषाः)
-निवेदनम्("jugar captured the same piece", सगृहीतम्, संगृहीतम्, दोषाः)
-निवेदनम्("it was a chariot", संगृहीतम्, अ::रचना(2, 4), दोषाः)
+निवेदनम्("play captured the same piece", आगृहीतम्, संगृहीतम्, दोषाः<~)
+निवेदनम्("jugar captured the same piece", सगृहीतम्, संगृहीतम्, दोषाः<~)
+निवेदनम्("it was a chariot", संगृहीतम्, अ::रचना(2, 4), दोषाः<~)
 
 भेदाः = 0
 @ क:1..64 {
     ? संस्कृतम्[क] <> आङ्ग्लम्[क] { भेदाः = भेदाः + 1 }
     ? संस्कृतम्[क] <> स्पानिशम्[क] { भेदाः = भेदाः + 1 }
 }
-निवेदनम्("the three boards agree after the capture", भेदाः, 0, दोषाः)
+निवेदनम्("the three boards agree after the capture", भेदाः, 0, दोषाः<~)
 
 // प्रत्यावर्तनम् अपि निर्गमप्राचलेन एव चलति।
 // EN: undo runs through the same machinery.
@@ -151,20 +151,20 @@ en::undo(आङ्ग्लम्, ग्रहणचालः, अ::रचन�
 @ क:1..64 {
     ? आङ्ग्लम्[क] <> ग्रहणस्थितिः[क] { भेदाः = भेदाः + 1 }
 }
-निवेदनम्("undo restored the position", भेदाः, 0, दोषाः)
+निवेदनम्("undo restored the position", भेदाः, 0, दोषाः<~)
 
 // ------------------------------------------------------------
 >> "" ¶
 >> "फलम् — outcomes" ¶
-निवेदनम्("legal_moves agrees", (en::legal_moves(संस्कृतफलकम्, 1))$#, (नि::वैधचालाः(संस्कृतफलकम्, 1))$#, दोषाः)
-निवेदनम्("jugadas_legales agrees", (es::jugadas_legales(संस्कृतफलकम्, 1))$#, 16, दोषाः)
-निवेदनम्("outcome agrees", en::outcome(संस्कृतफलकम्, 1), नि::परिणामः(संस्कृतफलकम्, 1), दोषाः)
-निवेदनम्("material agrees", en::material(संस्कृतफलकम्, 1), आक::सामग्री(संस्कृतफलकम्, 1), दोषाः)
+निवेदनम्("legal_moves agrees", (en::legal_moves(संस्कृतफलकम्, 1))$#, (नि::वैधचालाः(संस्कृतफलकम्, 1))$#, दोषाः<~)
+निवेदनम्("jugadas_legales agrees", (es::jugadas_legales(संस्कृतफलकम्, 1))$#, 16, दोषाः<~)
+निवेदनम्("outcome agrees", en::outcome(संस्कृतफलकम्, 1), नि::परिणामः(संस्कृतफलकम्<~, 1), दोषाः<~)
+निवेदनम्("material agrees", en::material(संस्कृतफलकम्, 1), आक::सामग्री(संस्कृतफलकम्, 1), दोषाः<~)
 
 // सूत्रम् अनूदितं न — तत् सूत्रम् एव, न शब्दः।
 // EN: the key is not translated — it is a key, not a word.
-निवेदनम्("outcome_key returns the key untranslated", en::outcome_key(1), "अन्तः.मातः", दोषाः)
-निवेदनम्("clave_resultado does the same", es::clave_resultado(1), "अन्तः.मातः", दोषाः)
+निवेदनम्("outcome_key returns the key untranslated", en::outcome_key(1), "अन्तः.मातः", दोषाः<~)
+निवेदनम्("clave_resultado does the same", es::clave_resultado(1), "अन्तः.मातः", दोषाः<~)
 
 >> "" ¶
 ? दोषाः == 0 {
