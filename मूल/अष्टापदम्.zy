@@ -102,10 +102,14 @@
         <~ स्थितिः
     }
 
+    // न्यासः प्रत्यागमश्च मूल्येन प्रतिलिखतः। अतः एकैकं पुनर्योजनं
+    // न आवश्यकम् — प्रत्यागमनम् एव प्रतिकृतिः, आह्वातुः स्वतन्त्रा।
+    //
+    // EN: Assignment and return copy by value, so returning the board IS
+    // the copy — the caller gets an independent one. Rebuilding it square
+    // by square was four times slower, on the path of every alpha-beta node.
     प्रतिकृतिः(स्थितिः) {
-        प्रति = []
-        @ मूल्यम् : स्थितिः { प्रति = प्रति $+ मूल्यम् }
-        <~ प्रति
+        <~ स्थितिः
     }
 
     // सर्वे गणिताः अङ्काः अत्रैव जायन्ते।
