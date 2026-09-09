@@ -14,7 +14,7 @@ salida** — que es lo que exige una búsqueda alfa-beta.
 | HLZ-CHA-001 | Bug | `@ <expr>` elegía la forma del bucle por la sintaxis en la VM y por el valor en los otros tres; y la truthiness del especificador difería en los cuatro | **Corregido** (v0.0.9), en dos vueltas |
 | HLZ-CHA-002 | Carencia | `@ i:2..n` con `n < 2` cuenta hacia atrás en vez de no iterar; no hay forma de rango vacío | **Avisado** — semántica intacta, aviso del analizador |
 | HLZ-CHA-003 | Doc | GUIDE.md decía que el modo numeral persiste «en el mismo fichero»; es global al proceso | **Corregido** |
-| HLZ-CHA-004 | Medición | La VM es 42–46× el tree-walker en esta carga, no ~4× | **Corregido** en los documentos |
+| HLZ-CHA-004 | Medición | La VM es 11–13× el tree-walker en esta carga, no ~4× (era 42–46× antes de HLZ-012 y HLZ-014) | **Corregido** en los documentos |
 | IDEA-CHA-001 | Idea | El modo numeral condicionado por locale no estaba documentado como técnica de i18n | **Documentado** — `USERAPPI18N.md` §14 |
 
 Todos resueltos el 2026-08-13. Lo que se decidió en cada uno está al pie de su
@@ -320,6 +320,24 @@ tree-walker, ~3 ms VM), y las dos cargas de este proyecto:
 
 El «~38×» de la primera medición era correcto en orden de magnitud; con el
 binario de v0.0.9 sale 42× y 46×.
+
+**Re-medido el 2026-09-02, y las dos últimas filas ya no dicen eso.** Dos
+arreglos de zy-GO, los dos en el tree-walker y ninguno en la VM: HLZ-012 (clonaba
+la colección entera para leer un elemento) y HLZ-014 (la clonaba otra vez al
+pasarla a una función). El `Value` del tree-walker ahora comparte
+`Array`/`Tuple`/`NamedTuple` tras un `Rc` y copia al escribir — el modelo que la
+VM tenía desde siempre, portado al otro motor.
+
+| Carga | tree-walker antes | tras HLZ-012 | tras HLZ-014 | VM | factor ahora |
+|-------|-------------------|--------------|--------------|-----|--------------|
+| `परीक्षा/गतिपरीक्षा.zy` | 6,11 s | 2,16 s | **1,94 s** | 0,171 s | 11,3× |
+| `परीक्षा/मतिपरीक्षा.zy` | 43,5 s | 16,08 s | **12,78 s** | 0,989 s | 12,9× |
+
+El tree-walker es **3,4×** más rápido que antes en esta carga, y la distancia con
+la VM cae de 42–46× a 11–13×. La conclusión del hallazgo no cambia —no hay un
+factor único, se cita la carga— pero la cifra que se cita, sí. Y la lección que
+deja es la de al lado: un cociente entre dos motores mide **los dos**, y el que
+se movió fue el lento.
 
 De paso apareció que la tabla de `ARCHITECTURE.md` estaba caduca en más de un
 sitio: daba *Collections* como ~14 s en el tree-walker —una limitación de clonado
