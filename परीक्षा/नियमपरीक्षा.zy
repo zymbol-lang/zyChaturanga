@@ -379,4 +379,5 @@ _रिक्तम् = आ::पठनम्([
     >> "PASS — every rule case behaved" ¶
 } _ {
     >> "FAIL — " दोषाः " problem(s)" ¶
+    <~ 1
 }

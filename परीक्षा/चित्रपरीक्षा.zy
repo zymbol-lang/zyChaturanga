@@ -161,4 +161,5 @@
     >> "PASS — the grid holds together" ¶
 } _ {
     >> "FAIL — " दोषाः " problem(s)" ¶
+    <~ 1
 }
