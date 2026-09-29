@@ -184,4 +184,5 @@
     >> "PASS — move generation counts hold" ¶
 } _ {
     >> "FAIL — " दोषाः " problem(s)" ¶
+    <~ 1
 }
