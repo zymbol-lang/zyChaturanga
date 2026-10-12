@@ -171,4 +171,5 @@ en::undo(आङ्ग्लम्, ग्रहणचालः, अ::रचन�
     >> "PASS — api/english and api/espanol resolve to the same engine" ¶
 } _ {
     >> "FAIL — " दोषाः " problem(s)" ¶
+    <~ 1
 }
