@@ -1,5 +1,7 @@
 # चतुरङ्गम् (चतुरंग)
 
+🌐 [zymbol-lang.org](https://zymbol-lang.org) · ▶ [playground](https://zymbol-lang.org/playground.html)
+
 > **Zymbol v0.0.9 के लिए लिखा गया**
 
 शतरंज का पूर्वज, टर्मिनल के लिए, पूरी तरह Zymbol में — संस्कृत में — लिखा गया,

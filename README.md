@@ -1,5 +1,7 @@
 # चतुरङ्गम् (Chaturanga)
 
+🌐 [zymbol-lang.org](https://zymbol-lang.org) · ▶ [playground](https://zymbol-lang.org/playground.html)
+
 > **Targets Zymbol v0.0.9**
 
 The ancestor of chess, for the terminal, written entirely in Zymbol — in
