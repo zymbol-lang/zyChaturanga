@@ -151,4 +151,5 @@
     >> "PASS — every key resolves in every locale" ¶
 } _ {
     >> "FAIL — " दोषाः " problem(s)" ¶
+    <~ 1
 }

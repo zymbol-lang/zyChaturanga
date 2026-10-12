@@ -291,4 +291,5 @@
     >> "PASS — the engine reads the position" ¶
 } _ {
     >> "FAIL — " दोषाः " problem(s)" ¶
+    <~ 1
 }
