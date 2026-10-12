@@ -1,5 +1,7 @@
 # चतुरङ्गम् (Chaturanga)
 
+🌐 [zymbol-lang.org](https://zymbol-lang.org) · ▶ [playground](https://zymbol-lang.org/playground.html)
+
 > **Escrito para Zymbol v0.0.9**
 
 El antepasado del ajedrez, para la terminal, escrito íntegramente en Zymbol —en
