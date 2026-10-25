@@ -1,7 +1,7 @@
 # चतुरङ्गम् — Hallazgos de lenguaje
 
 Bugs, carencias e ideas encontrados escribiendo चतुरङ्गम् en Zymbol v0.0.9,
-siguiendo el proceso LDV de [`interpreter/LDV.md`](../interpreter/LDV.md) y la
+siguiendo el proceso LDV de `zymbol-design/LDV.md` y la
 convención de Serpiente, Hov veS y 囲碁.
 
 Este proyecto valida una clase de capacidad distinta a la del motor de go:
@@ -355,8 +355,8 @@ archivados de v0.0.4 se dejaron como están: son instantáneas históricas.
 
 囲碁 tiene dos mecanismos de i18n: cadenas de interfaz en ejecución y traducción
 de identificadores por reexportación. Este proyecto encontró un tercero, y no
-está documentado como tal en [`I18N.md`](../interpreter/I18N.md) ni en
-[`USERAPPI18N.md`](../interpreter/USERAPPI18N.md):
+está documentado como tal en `zymbol-design/I18N.md` ni en
+`zymbol-design/USERAPPI18N.md`:
 
 **elegir idioma puede elegir escritura de cifras.**
 

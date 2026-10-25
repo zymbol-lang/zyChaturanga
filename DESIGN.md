@@ -445,7 +445,7 @@ behaviour and neither obvious when used this way:
 ## 9. api/ — identifier-level translation
 
 Pure re-export layers, no logic, no runtime cost — the three-layer pattern from
-[I18N.md](../interpreter/I18N.md) over a working engine. Constants re-export with
+`zymbol-design/I18N.md` over a working engine. Constants re-export with
 `.`, functions with `::`, and they read as declared: `en.BLACK`, `en::play(…)`.
 
 The piece names are chaturanga's: `ELEPHANT` and not `BISHOP`, `CHARIOT` and not
