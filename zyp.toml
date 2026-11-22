@@ -2,7 +2,7 @@
 name = "chaturanga"
 version = "0.1.0"
 engine = ">=0.0.9"
-description = "Chaturanga, the ancestor of chess — written in Sanskrit, with the historical rules and an alpha-beta opponent"
+desc = "Chaturanga, the ancestor of chess — written in Sanskrit, with the historical rules and an alpha-beta opponent"
 license = "AGPL-3.0-only"
 
 [[script]]
